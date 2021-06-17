@@ -1,0 +1,13 @@
+{
+  "roots": [
+    "src/",
+    "public/"
+  ],
+  "builtinLinters": "all",
+  "disableAllAutoFixes": false,
+  "disabledLinters": [
+    "Facebook\\HHAST\\Linters\\AsyncFunctionAndMethodLinter",
+    "Facebook\\HHAST\\Linters\\DontAwaitInALoopLinter"
+  ],
+  "overrides": []
+}

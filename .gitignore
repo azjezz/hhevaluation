@@ -1,0 +1,4 @@
+/vendor/
+www.pid
+/var/*
+!/var/.gitkeep

@@ -1,0 +1,23 @@
+{
+    "name": "azjezz/hhevaluation",
+    "authors": [
+        {
+            "name": "azjezz",
+            "email": "azjezz@protonmail.com"
+        }
+    ],
+    "require": {
+        "hhvm": "~4.113.0 || ~4.114.0",
+        "nuxed/nuxed": "dev-develop"
+    },
+    "require-dev": {
+        "hhvm/hhast": "^4.113.0",
+        "hhvm/hhvm-autoload": "^3.2.0"
+    },
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "git@github.com:nuxed/nuxed.git"
+        }
+    ]
+}

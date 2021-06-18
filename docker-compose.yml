@@ -1,0 +1,19 @@
+version: '3.4'
+
+services:
+  db:
+    image: mysql:5.6
+    environment:
+      - MYSQL_DATABASE=hheval
+      - MYSQL_USER=hheval
+      - MYSQL_PASSWORD=LKJLj35mlk
+      - MYSQL_ROOT_PASSWORD=lkjlj53LLMkml1365LJKMLKmkyGtg72m5EpT5C56D
+    volumes:
+      - db-data:/var/lib/mysql:rw
+    ports:
+      - target: 3306
+        published: 3076
+        protocol: tcp
+
+volumes:
+  db-data: {}

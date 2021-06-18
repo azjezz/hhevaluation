@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "132048a9240570e8ad53b1958b975f7b",
+    "content-hash": "b65d6f38df3b1ff3b6e8223d87aad5b0",
     "packages": [
         {
             "name": "azjezz/http-normalizer",
@@ -126,6 +126,54 @@
                 "source": "https://github.com/hhvm/hack-router/tree/v0.19.8"
             },
             "time": "2020-12-18T22:55:23+00:00"
+        },
+        {
+            "name": "facebook/xhp-lib",
+            "version": "v4.0.4",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/hhvm/xhp-lib.git",
+                "reference": "3804a7ddb385c4c7d44b011292be8a06ecad7c66"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/hhvm/xhp-lib/zipball/3804a7ddb385c4c7d44b011292be8a06ecad7c66",
+                "reference": "3804a7ddb385c4c7d44b011292be8a06ecad7c66",
+                "shasum": ""
+            },
+            "require": {
+                "hhvm": "^4.73",
+                "hhvm/hsl": "^4.36.0"
+            },
+            "require-dev": {
+                "facebook/fbexpect": "^2.0.0",
+                "hhvm/hacktest": "^2.0",
+                "hhvm/hhast": "^4.0",
+                "hhvm/hhvm-autoload": "^2.0|^3.0"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "4.x-dev"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "Class library for XHP",
+            "homepage": "https://github.com/facebook/xhp-lib",
+            "keywords": [
+                "facebook",
+                "hack",
+                "hhvm",
+                "xhp"
+            ],
+            "support": {
+                "issues": "https://github.com/hhvm/xhp-lib/issues",
+                "source": "https://github.com/hhvm/xhp-lib/tree/v4.0.4"
+            },
+            "time": "2021-05-04T13:59:53+00:00"
         },
         {
             "name": "hhvm/hhvm-autoload",

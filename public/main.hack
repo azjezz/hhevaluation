@@ -10,14 +10,13 @@ async function main(): Awaitable<void> {
 
   Environment\add('APP_MODE', 'dev');
 
-  $runner = new Runner\Runner(\sys_get_temp_dir() as string);
-
-  $cache = new Cache\Cache(new Cache\Store\ApcStore());
+  $cache = new Cache\Cache(new Cache\Store\NullStore());
   $application = new Http\Application(vec[], $cache);
 
   $application
     ->get('index', '/', new Handler\IndexHandler())
-    ->post('execute', '/execute', new Handler\ExecuteHandler($runner));
+    ->post('evaluate', '/e', new Handler\EvaluateHandler())
+    ->get('result', '/r/{identifier}', new Handler\ResultHandler());
 
   await $application->run();
 }

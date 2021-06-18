@@ -16,12 +16,11 @@ final class SetupCommand extends Command\Command {
   public async function run(): Awaitable<int> {
     // pull docker images.
     foreach (HHVM\Version::getValues() as $value) {
-      $image = HHVM\Image::create($value);
 
       concurrent {
         await $this->output
           ->write(Str\format('<fg=yellow>Pulling HHVM %s...</> ', $value));
-        await $image->execute(__DIR__, vec['hhvm', '--version']);
+        await HHVM\Container::pull($value);
       }
 
       await $this->output->writeln('<fg=green>done.</>');

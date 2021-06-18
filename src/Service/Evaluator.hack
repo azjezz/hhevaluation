@@ -22,11 +22,7 @@ final class Evaluator {
       return self::$instance;
     }
 
-    $configuration = await HHEvaluation\ConfigurationLoader::load<
-      this::Configuration,
-    >('evaluator');
-
-    self::$instance = new self($configuration['directory']);
+    self::$instance = new self(\realpath(__DIR__.'/../../var') as string);
 
     return self::$instance;
   }
@@ -36,7 +32,6 @@ final class Evaluator {
     string $code,
     string $configuration,
   ): Awaitable<ValueObject\EvaluationResult> {
-    $image = HHVM\Image::create($version);
 
     $identifier = SecureRandom\string(
       14,
@@ -44,8 +39,8 @@ final class Evaluator {
     );
 
     $directory = $this->directory.'/'.$identifier;
-
     \mkdir($directory);
+    $container = await HHVM\Container::run($version, $directory);
 
     $code_file = File\open_read_write($directory.'/main.hack');
     $configuration_file = File\open_read_write($directory.'/.hhconfig');
@@ -53,24 +48,26 @@ final class Evaluator {
     await $code_file->writeAllAsync($code);
     await $configuration_file->writeAllAsync($configuration);
 
-    list($_, $hh_client_version, $_) = await $image->execute(
-      $directory,
+    await $container->execute(vec['hh_server', 'start']);
+
+    list($_, $hh_client_version, $_) = await $container->execute(
       vec['hh_client', '--version'],
     );
     list($hh_client_exit_code, $hh_client_stdout, $hh_client_stderr) =
-      await $image->execute($directory, vec['hh_client', 'main.hack']);
+      await $container->execute(vec['hh_client', 'main.hack']);
 
-    list($_, $hhvm_version, $_) = await $image->execute(
-      $directory,
+    list($_, $hhvm_version, $_) = await $container->execute(
       vec['hhvm', '--version'],
     );
-    list($hhvm_exit_code, $hhvm_stdout, $hhvm_stderr) = await $image->execute(
-      $directory,
-      vec['hhvm', 'main.hack'],
-    );
+    list($hhvm_exit_code, $hhvm_stdout, $hhvm_stderr) =
+      await $container->execute(vec['hhvm', 'main.hack']);
 
     $code_file->close();
     $configuration_file->close();
+
+    \unlink($code_file->getPath());
+    \unlink($configuration_file->getPath());
+    \rmdir($directory);
 
     return new ValueObject\EvaluationResult(
       $identifier,

@@ -44,23 +44,27 @@ final class Evaluator {
 
     $code_file = File\open_read_write($directory.'/main.hack');
     $configuration_file = File\open_read_write($directory.'/.hhconfig');
+    concurrent {
+      await $code_file->writeAllAsync($code);
+      await $configuration_file->writeAllAsync($configuration);
+    }
 
-    await $code_file->writeAllAsync($code);
-    await $configuration_file->writeAllAsync($configuration);
+    concurrent {
+      await $container->execute(vec['hh_server', 'start', '-d', '.']);
 
-    await $container->execute(vec['hh_server', 'start']);
+      list($_, $hh_client_version, $_) = await $container->execute(
+        vec['hh_client', '--version'],
+      );
 
-    list($_, $hh_client_version, $_) = await $container->execute(
-      vec['hh_client', '--version'],
-    );
-    list($hh_client_exit_code, $hh_client_stdout, $hh_client_stderr) =
-      await $container->execute(vec['hh_client', 'main.hack']);
+      list($hh_client_exit_code, $hh_client_stdout, $hh_client_stderr) =
+        await $container->execute(vec['hh_client', 'main.hack']);
 
-    list($_, $hhvm_version, $_) = await $container->execute(
-      vec['hhvm', '--version'],
-    );
-    list($hhvm_exit_code, $hhvm_stdout, $hhvm_stderr) =
-      await $container->execute(vec['hhvm', 'main.hack']);
+      list($_, $hhvm_version, $_) = await $container->execute(
+        vec['hhvm', '--version'],
+      );
+      list($hhvm_exit_code, $hhvm_stdout, $hhvm_stderr) =
+        await $container->execute(vec['hhvm', 'main.hack']);
+    }
 
     $code_file->close();
     $configuration_file->close();

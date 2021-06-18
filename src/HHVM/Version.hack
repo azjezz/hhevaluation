@@ -1,3 +1,4 @@
+
 namespace HHEvaluation\HHVM;
 
 enum Version: string as string {

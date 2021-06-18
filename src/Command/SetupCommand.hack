@@ -1,3 +1,4 @@
+
 namespace HHEvaluation\Command;
 
 use namespace HH\Lib\Str;

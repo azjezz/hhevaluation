@@ -1,3 +1,4 @@
+
 namespace HHEvaluation\ValueObject;
 
 final class EvaluationResult {

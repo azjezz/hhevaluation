@@ -1,3 +1,4 @@
+
 namespace HHEvaluation\Template;
 
 use namespace HHEvaluation\ValueObject;
@@ -46,7 +47,7 @@ final class ResultTemplate {
             </span>
           </h2>
           <hr class="border border-red-500 mb-8 mt-4" />
-          <div class="h-full grid grid-rows-3 grid-cols-2 gap-4">
+          <div class="h-full grid grid-cols-2 gap-4">
             <div class="row-span-3  rounded-md text-gray-900">
               <textarea
                 placeholder="Edit main.hack"

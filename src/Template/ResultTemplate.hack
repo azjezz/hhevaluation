@@ -99,25 +99,32 @@ final class ResultTemplate {
             </div>
             <div
               class=
-                "px-4 overflow-y-scroll  h-96 py-3 bg-white rounded-md text-gray-900 border border-gray-900 rounded-md w-full"
-              title={$result->hhvm_version_output}>
+                "px-4 overflow-y-scroll  h-96 py-3 bg-white rounded-md text-gray-900 border border-gray-900 rounded-md w-full">
               {$hhvm_stdout}
-              <pre class="text-gray-600 text-sm code font-mono">
+              <pre class="text-gray-600 mb-4 text-sm code font-mono">
                 <code>
                   {Str\trim_left($result->hhvm_stderr, "\n")}
+                </code>
+              </pre>
+              <pre class="text-gray-500 text-xs code font-mono">
+                <code>
+                  {Str\trim_left($result->hhvm_version_output, "\n")}
                 </code>
               </pre>
             </div>
 
             <div
               class=
-                "px-4 py-3 overflow-y-scroll h-96 bg-white rounded-md text-gray-900 border border-gray-900 rounded-md w-full"
-              title={$result->hh_client_version_output}>
+                "px-4 py-3 overflow-y-scroll h-96 bg-white rounded-md text-gray-900 border border-gray-900 rounded-md w-full">
               {$hh_client_stdout}
-              <br />
-              <pre class="text-gray-600 text-sm code font-mono">
+              <pre class="text-gray-600 mb-4 text-sm code font-mono">
                 <code>
                   {Str\trim_left($result->hh_client_stderr, "\n")}
+                </code>
+              </pre>
+              <pre class="text-gray-500 text-xs code font-mono">
+                <code>
+                  {Str\trim_left($result->hh_client_version_output, "\n")}
                 </code>
               </pre>
             </div>

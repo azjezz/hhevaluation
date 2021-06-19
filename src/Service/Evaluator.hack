@@ -45,19 +45,19 @@ final class Evaluator {
       await $configuration_file->writeAllAsync($configuration);
     }
 
-    await $container->execute(vec['hh_server', 'start', '-d', '.']);
-
     concurrent {
       list($_, $hh_client_version, $_) = await $container->execute(
         vec['hh_client', '--version'],
       );
 
-      list($hh_client_exit_code, $hh_client_stdout, $hh_client_stderr) =
-        await $container->execute(vec['hh_client', 'main.hack']);
-
       list($_, $hhvm_version, $_) = await $container->execute(
         vec['hhvm', '--version'],
       );
+
+      list($hh_client_exit_code, $hh_client_stdout, $hh_client_stderr) =
+        await $container->execute(
+          vec['hh_client', '--error-format', 'highlighted'],
+        );
 
       list($hhvm_exit_code, $hhvm_stdout, $hhvm_stderr) =
         await $container->execute(vec['hhvm', 'main.hack']);

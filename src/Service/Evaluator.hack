@@ -45,9 +45,9 @@ final class Evaluator {
       await $configuration_file->writeAllAsync($configuration);
     }
 
-    concurrent {
-      await $container->execute(vec['hh_server', 'start', '-d', '.']);
+    await $container->execute(vec['hh_server', 'start', '-d', '.']);
 
+    concurrent {
       list($_, $hh_client_version, $_) = await $container->execute(
         vec['hh_client', '--version'],
       );
@@ -58,12 +58,14 @@ final class Evaluator {
       list($_, $hhvm_version, $_) = await $container->execute(
         vec['hhvm', '--version'],
       );
+
       list($hhvm_exit_code, $hhvm_stdout, $hhvm_stderr) =
         await $container->execute(vec['hhvm', 'main.hack']);
     }
 
     $code_file->close();
     $configuration_file->close();
+    await $container->kill();
 
     \unlink($code_file->getPath());
     \unlink($configuration_file->getPath());

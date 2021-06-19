@@ -75,6 +75,7 @@ HACK;
               </textarea>
 
               <textarea
+                placeholder="Edit .hhconfig"
                 id="configuration"
                 title=".hhconfig configuration"
                 rows={8}

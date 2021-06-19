@@ -63,8 +63,8 @@ final class ResultTemplate {
     return BaseTemplate::render(
       <div class="h-screen container w-full mx-auto px-10 py-8">
         <div class="w-full px-4 md:px-6 text-xl text-gray-800 leading-normal">
-          <h2 class="text-xl">HHEvaluation <span
-              class="text-gray-600 text-base">by <a
+          <h2 class="text-xl"><a href="/">HHEvaluation</a><span
+              class="text-gray-600 text-base"> by <a
               class="underline"
               href="https://github.com/azjezz">azjezz</a>
             </span>

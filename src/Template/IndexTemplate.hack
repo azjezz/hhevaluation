@@ -62,7 +62,7 @@ HACK;
           </h2>
           <hr class="border border-red-500 mb-8 mt-4" />
           <div class="h-full row-span-3 rounded-md text-gray-900">
-            <form action="/e" method="POST" spellcheck="false">
+            <form action="/e" method="POST" spellcheck="false" id="hheForm">
               <textarea
                 placeholder="Edit main.hack"
                 id="code"
@@ -90,6 +90,7 @@ HACK;
                   <input
                     type="submit"
                     value="Run"
+                    id="hheRun"
                     class=
                       "bg-white hover:bg-gray-100 text-gray-800 py-1 border border-gray-900 rounded shadow float-right w-full"
                   />

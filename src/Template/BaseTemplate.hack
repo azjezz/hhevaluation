@@ -1,7 +1,16 @@
 
 namespace HHEvaluation\Template;
 
-use type Facebook\XHP\HTML\{body, doctype, head, html, link, meta, title};
+use type Facebook\XHP\HTML\{
+  body,
+  doctype,
+  head,
+  html,
+  link,
+  meta,
+  title,
+  script,
+};
 
 final class BaseTemplate {
   public static function render(\XHPChild $child): Awaitable<string> {
@@ -30,6 +39,7 @@ final class BaseTemplate {
               type="text/css"
             />
             <link href="/public/css/main.css" rel="stylesheet" />
+            <script src="/public/js/main.js" />
           </head>
           <body class="bg-gray-100 font-sans leading-normal tracking-normal">
           </body>

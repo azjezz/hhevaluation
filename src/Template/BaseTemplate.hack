@@ -1,15 +1,7 @@
 
-namespace HHEvaluation\Template\Element;
+namespace HHEvaluation\Template;
 
-use type Facebook\XHP\HTML\{
-  body,
-  doctype,
-  head,
-  html,
-  link,
-  meta,
-  title,
-};
+use type Facebook\XHP\HTML\{body, doctype, head, html, link, meta, title};
 
 final class BaseTemplate {
   public static function render(\XHPChild $child): Awaitable<string> {
@@ -36,10 +28,6 @@ final class BaseTemplate {
               href="https://unpkg.com/@tailwindcss/forms@0.3.3/dist/forms.css"
               rel="stylesheet"
               type="text/css"
-            />
-            <link
-              href="https://fonts.googleapis.com/css?family=Fira+Sans"
-              rel="stylesheet"
             />
             <link href="/public/css/main.css" rel="stylesheet" />
           </head>

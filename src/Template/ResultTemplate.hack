@@ -38,16 +38,29 @@ final class ResultTemplate {
 
     if ($result->hhvm_stdout !== '') {
       $hhvm_stdout =
-        <pre class="text-base mb-2 code">
+        <pre class="text-base mb-2 code font-mono">
           <code>
-            {Str\trim_left($result->hhvm_stdout, "\n")}
+            {$result->hhvm_stdout}
           </code>
         </pre>;
     } else {
       $hhvm_stdout = <div />;
     }
 
-    return Element\BaseTemplate::render(
+    $hh_client_stdout = Str\trim($result->hh_client_stdout, "\n");
+    $hh_client_stdout =
+      <pre
+        class={
+          $hh_client_stdout === 'No errors!'
+            ? "text-base text-green-800 mb-2 code font-mono"
+            : "text-base text-red-500 mb-2 code font-mono"
+        }>
+        <code>
+          {$result->hh_client_stdout}
+        </code>
+      </pre>;
+
+    return BaseTemplate::render(
       <div class="h-screen container w-full mx-auto px-10 py-8">
         <div class="w-full px-4 md:px-6 text-xl text-gray-800 leading-normal">
           <h2 class="text-xl">HHEvaluation <span
@@ -66,7 +79,7 @@ final class ResultTemplate {
                 name="code"
                 title="Hack code"
                 class=
-                  "px-4 py-3 form-input resize-none border border-gray-900 focus:border-gray-900 focus:ring-0 rounded-md w-full code"
+                  "px-4 py-3 form-input resize-none border border-gray-900 focus:border-gray-900 focus:ring-0 rounded-md w-full code font-mono"
                 disabled={true}>
                 {$result->code}
               </textarea>
@@ -76,11 +89,11 @@ final class ResultTemplate {
                 rows={8}
                 name="configuration"
                 class=
-                  "px-4 py-3 mt-4 form-input resize-none border border-gray-900 focus:border-gray-900 focus:ring-0 rounded-md w-full code"
+                  "px-4 py-3 mt-4 form-input resize-none border border-gray-900 focus:border-gray-900 focus:ring-0 rounded-md w-full code font-mono"
                 disabled={true}>
                 {$result->configuration}
               </textarea>
-              <div class="mt-4">
+              <div class="mt-3">
                 {$selector}
               </div>
             </div>
@@ -89,7 +102,7 @@ final class ResultTemplate {
                 "px-4 overflow-y-scroll  h-96 py-3 bg-white rounded-md text-gray-900 border border-gray-900 rounded-md w-full"
               title={$result->hhvm_version_output}>
               {$hhvm_stdout}
-              <pre class="text-gray-600 text-sm code">
+              <pre class="text-gray-600 text-sm code font-mono">
                 <code>
                   {Str\trim_left($result->hhvm_stderr, "\n")}
                 </code>
@@ -100,13 +113,9 @@ final class ResultTemplate {
               class=
                 "px-4 py-3 overflow-y-scroll h-96 bg-white rounded-md text-gray-900 border border-gray-900 rounded-md w-full"
               title={$result->hh_client_version_output}>
-              <pre class="text-base text-red-500 mb-2 code">
-                <code>
-                  {Str\trim_left($result->hh_client_stdout, "\n")}
-                </code>
-              </pre>
+              {$hh_client_stdout}
               <br />
-              <pre class="text-gray-600 text-sm code">
+              <pre class="text-gray-600 text-sm code font-mono">
                 <code>
                   {Str\trim_left($result->hh_client_stderr, "\n")}
                 </code>

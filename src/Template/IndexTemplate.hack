@@ -31,7 +31,6 @@ async function main(): Awaitable<void> {
 HACK;
 
   const DEFAULT_CONFIG = <<<HACK
-assume_php=false
 safe_array = true
 safe_vector_array = true
 unsafe_rx = false
@@ -52,7 +51,7 @@ HACK;
       $selector->appendChild(<option value={$version}>{$version}</option>);
     }
 
-    return Element\BaseTemplate::render(
+    return BaseTemplate::render(
       <div class="h-screen container w-full mx-auto px-10 py-8">
         <div class="w-full px-4 md:px-6 text-xl text-gray-800 leading-normal">
           <h2 class="text-xl">HHEvaluation <span
@@ -71,7 +70,7 @@ HACK;
                 name="code"
                 title="Hack code"
                 class=
-                  "px-4 py-3 form-input resize-none border border-gray-900 focus:border-gray-900 focus:ring-0 rounded-md w-full code">
+                  "px-4 py-3 form-input resize-none border border-gray-900 focus:border-gray-900 focus:ring-0 rounded-md w-full code font-mono">
                 {self::DEFAULT_CODE}
               </textarea>
 
@@ -81,11 +80,11 @@ HACK;
                 rows={8}
                 name="configuration"
                 class=
-                  "px-4 py-3 mt-4 form-input resize-none border border-gray-900 focus:border-gray-900 focus:ring-0 rounded-md w-full code">
+                  "px-4 py-3 mt-4 form-input resize-none border border-gray-900 focus:border-gray-900 focus:ring-0 rounded-md w-full code font-mono">
                 {self::DEFAULT_CONFIG}
               </textarea>
 
-              <div class="grid grid-cols-2 gap-4 mt-4">
+              <div class="grid grid-cols-2 gap-4 mt-3">
                 <div>{$selector}</div>
                 <div>
                   <input

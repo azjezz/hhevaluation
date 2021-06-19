@@ -2,10 +2,8 @@
 namespace HHEvaluation\Handler;
 
 use namespace HHEvaluation;
-use namespace HHEvaluation\HHVM;
-use namespace HHEvaluation\Service;
+use namespace HHEvaluation\{HHVM, Service};
 use namespace Nuxed\Http\{Handler, Message};
-use namespace HH\Lib\{File, Str};
 use namespace Facebook\TypeSpec;
 
 final class EvaluateHandler implements Handler\IHandler {

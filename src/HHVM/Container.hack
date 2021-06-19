@@ -1,7 +1,7 @@
 
 namespace HHEvaluation\HHVM;
 
-use namespace HH\Lib\{File, SecureRandom, Vec, Str};
+use namespace HH\Lib\{Str, Vec};
 use namespace Nuxed\Process;
 
 final class Container {
@@ -16,7 +16,7 @@ final class Container {
     Version $version,
     string $directory,
   ): Awaitable<this> {
-    list($stdout, $stderr) = await Process\execute(
+    list($stdout, $_stderr) = await Process\execute(
       'docker',
       vec[
         'run',
@@ -64,7 +64,7 @@ final class Container {
   }
 
   public async function kill(): Awaitable<void> {
-    list($stdout, $stderr) = await Process\execute(
+    list($_stdout, $_stderr) = await Process\execute(
       'docker',
       vec[
         'kill',

@@ -1,21 +1,20 @@
 
 namespace HHEvaluation\Template;
 
+use namespace HH\Lib\Str;
 use namespace HHEvaluation\ValueObject;
 use type Facebook\XHP\HTML\{
   a,
-  h2,
   br,
-  hr,
-  form,
-  h4,
-  textarea,
-  img,
-  input,
+  code,
   div,
-  span,
-  select,
+  h2,
+  hr,
   option,
+  pre,
+  select,
+  span,
+  textarea,
 };
 
 final class ResultTemplate {
@@ -37,6 +36,17 @@ final class ResultTemplate {
       </option>,
     );
 
+    if ($result->hhvm_stdout !== '') {
+      $hhvm_stdout =
+        <pre class="text-base mb-2 code">
+          <code>
+            {Str\trim_left($result->hhvm_stdout, "\n")}
+          </code>
+        </pre>;
+    } else {
+      $hhvm_stdout = <div />;
+    }
+
     return Element\BaseTemplate::render(
       <div class="h-screen container w-full mx-auto px-10 py-8">
         <div class="w-full px-4 md:px-6 text-xl text-gray-800 leading-normal">
@@ -56,7 +66,7 @@ final class ResultTemplate {
                 name="code"
                 title="Hack code"
                 class=
-                  "px-4 py-3 form-input resize-none border border-gray-900 focus:border-gray-900 focus:ring-0 rounded-md w-full"
+                  "px-4 py-3 form-input resize-none border border-gray-900 focus:border-gray-900 focus:ring-0 rounded-md w-full code"
                 disabled={true}>
                 {$result->code}
               </textarea>
@@ -66,40 +76,41 @@ final class ResultTemplate {
                 rows={8}
                 name="configuration"
                 class=
-                  "px-4 py-3 mt-4 form-input resize-none border border-gray-900 focus:border-gray-900 focus:ring-0 rounded-md w-full"
+                  "px-4 py-3 mt-4 form-input resize-none border border-gray-900 focus:border-gray-900 focus:ring-0 rounded-md w-full code"
                 disabled={true}>
                 {$result->configuration}
               </textarea>
-
-
               <div class="mt-4">
                 {$selector}
               </div>
             </div>
             <div
               class=
-                "px-4 overflow-y-scroll h-96 py-3 bg-white rounded-md text-gray-900 border border-gray-900 rounded-md w-full"
+                "px-4 overflow-y-scroll  h-96 py-3 bg-white rounded-md text-gray-900 border border-gray-900 rounded-md w-full"
               title={$result->hhvm_version_output}>
-              <div>
-                {$result->hhvm_stdout}
-              </div>
-              <br />
-              <div>
-                {$result->hhvm_stderr}
-              </div>
+              {$hhvm_stdout}
+              <pre class="text-gray-600 text-sm code">
+                <code>
+                  {Str\trim_left($result->hhvm_stderr, "\n")}
+                </code>
+              </pre>
             </div>
 
             <div
               class=
                 "px-4 py-3 overflow-y-scroll h-96 bg-white rounded-md text-gray-900 border border-gray-900 rounded-md w-full"
               title={$result->hh_client_version_output}>
-              <div>
-                {$result->hh_client_stdout}
-              </div>
+              <pre class="text-base text-red-500 mb-2 code">
+                <code>
+                  {Str\trim_left($result->hh_client_stdout, "\n")}
+                </code>
+              </pre>
               <br />
-              <div class="text-gray-500">
-                {$result->hh_client_stderr}
-              </div>
+              <pre class="text-gray-600 text-sm code">
+                <code>
+                  {Str\trim_left($result->hh_client_stderr, "\n")}
+                </code>
+              </pre>
             </div>
           </div>
         </div>

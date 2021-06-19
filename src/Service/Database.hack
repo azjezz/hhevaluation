@@ -1,8 +1,6 @@
 
 namespace HHEvaluation\Service;
 
-use namespace HH\Lib\{IO, File};
-use namespace Nuxed\Json;
 use namespace HHEvaluation;
 use namespace HHEvaluation\ValueObject;
 
@@ -81,7 +79,7 @@ final class Database {
   public async function saveEvaluation(
     ValueObject\EvaluationResult $result,
   ): Awaitable<void> {
-    $res = await $this->connection->queryf(
+    await $this->connection->queryf(
       'INSERT INTO evaluation_results VALUES(%s, %s, %s, %s, %s, %d, %s, %s, %s, %d, %s, %s, %s)',
       $result->identifier,
       $result->code,

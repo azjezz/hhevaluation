@@ -1,11 +1,8 @@
 
 namespace HHEvaluation\Handler;
 
-use namespace HHEvaluation\Template;
-use namespace HHEvaluation\Service;
+use namespace HHEvaluation\{Service, Template};
 use namespace Nuxed\Http\{Handler, Message};
-use namespace HH\Lib\{File, Str};
-use namespace Facebook\TypeSpec;
 
 final class ResultHandler implements Handler\IHandler {
   public async function handle(

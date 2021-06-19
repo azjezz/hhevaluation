@@ -1,12 +1,8 @@
 namespace HHEvaluation\Service;
 
-use namespace HH\Lib\File;
-use namespace HH\Lib\SecureRandom;
-use namespace HH\Lib\Str;
-use namespace Nuxed\Json;
+use namespace HH\Lib\{File, SecureRandom};
 use namespace HHEvaluation;
-use namespace HHEvaluation\ValueObject;
-use namespace HHEvaluation\HHVM;
+use namespace HHEvaluation\{HHVM, ValueObject};
 
 final class Evaluator {
   const type Configuration = shape(

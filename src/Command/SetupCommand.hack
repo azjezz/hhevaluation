@@ -4,20 +4,20 @@ namespace HHEvaluation\Command;
 use namespace HH\Lib\Str;
 use namespace Nuxed\Console\Command;
 use namespace HHEvaluation;
-use namespace HHEvaluation\HHVM;
-use namespace HHEvaluation\Service;
+use namespace HHEvaluation\{HHVM, Service};
 
 final class SetupCommand extends Command\Command {
+  <<__Override>>
   public function configure(): void {
     $this
       ->setName('hhevaluation:setup')
       ->setDescription('Setup HHEvaluation environment.');
   }
 
+  <<__Override>>
   public async function run(): Awaitable<int> {
     // pull docker images.
     foreach (HHVM\Version::getValues() as $value) {
-
       concurrent {
         await $this->output
           ->write(Str\format('<fg=yellow>Pulling HHVM %s...</> ', $value));
@@ -26,7 +26,6 @@ final class SetupCommand extends Command\Command {
 
       await $this->output->writeln('<fg=green>done.</>');
     }
-
 
     // Connect to the database.
     concurrent {

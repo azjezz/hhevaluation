@@ -2,19 +2,13 @@
 namespace HHEvaluation\Template\Element;
 
 use type Facebook\XHP\HTML\{
-  doctype,
-  html,
-  head,
-  title,
-  meta,
   body,
-  h2,
-  hr,
+  doctype,
+  head,
+  html,
   link,
-  form,
-  h4,
-  textarea,
-  input,
+  meta,
+  title,
 };
 
 final class BaseTemplate {
@@ -43,6 +37,11 @@ final class BaseTemplate {
               rel="stylesheet"
               type="text/css"
             />
+            <link
+              href="https://fonts.googleapis.com/css?family=Fira+Sans"
+              rel="stylesheet"
+            />
+            <link href="/public/css/main.css" rel="stylesheet" />
           </head>
           <body class="bg-gray-100 font-sans leading-normal tracking-normal">
           </body>

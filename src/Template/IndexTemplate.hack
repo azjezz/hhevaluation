@@ -4,18 +4,15 @@ namespace HHEvaluation\Template;
 use namespace HHEvaluation\HHVM;
 use type Facebook\XHP\HTML\{
   a,
+  div,
+  form,
   h2,
   hr,
-  br,
-  form,
-  h4,
-  textarea,
-  img,
   input,
-  div,
-  span,
-  select,
   option,
+  select,
+  span,
+  textarea,
 };
 
 final class IndexTemplate {
@@ -74,19 +71,19 @@ HACK;
                 name="code"
                 title="Hack code"
                 class=
-                  "px-4 py-3 form-input resize-none border border-gray-900 focus:border-gray-900 focus:ring-0 rounded-md w-full">
+                  "px-4 py-3 form-input resize-none border border-gray-900 focus:border-gray-900 focus:ring-0 rounded-md w-full code">
                 {self::DEFAULT_CODE}
               </textarea>
+
               <textarea
                 id="configuration"
                 title=".hhconfig configuration"
                 rows={8}
                 name="configuration"
                 class=
-                  "px-4 py-3 mt-4 form-input resize-none border border-gray-900 focus:border-gray-900 focus:ring-0 rounded-md w-full">
+                  "px-4 py-3 mt-4 form-input resize-none border border-gray-900 focus:border-gray-900 focus:ring-0 rounded-md w-full code">
                 {self::DEFAULT_CONFIG}
               </textarea>
-
 
               <div class="grid grid-cols-2 gap-4 mt-4">
                 <div>{$selector}</div>

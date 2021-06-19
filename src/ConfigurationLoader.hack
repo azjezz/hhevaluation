@@ -1,7 +1,7 @@
 
 namespace HHEvaluation;
 
-use namespace HH\Lib\{IO, File};
+use namespace HH\Lib\File;
 use namespace Nuxed\Json;
 
 final class ConfigurationLoader {

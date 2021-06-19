@@ -1,0 +1,14 @@
+* {
+  font-family: 'Fira Sans', "ui-monospace", "SFMono-Regular", "Menlo", "Monaco", "Consolas", "Liberation Mono", "Courier New", "monospace" !important;
+}
+
+.code {
+  font-variant-ligatures: common-ligatures;
+
+  font-feature-settings: "liga", "dlig", "zero";
+  text-rendering: optimizeLegibility;
+  font-style: normal;
+  font-weight: normal;
+  font-variant: normal;
+  text-transform: none;
+}

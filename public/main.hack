@@ -19,7 +19,10 @@ async function main(): Awaitable<void> {
         |> $$->withHeader('X-Powered-By', vec['Nuxed']);
 
       if (Environment\mode() === Environment\Mode::PRODUCTION) {
-        $response = $response->withAddedHeader('Strict-Transport-Security', vec['max-age=31536000']);
+        $response = $response
+          ->withHeader('Strict-Transport-Security', vec['max-age=31536000'])
+          ->withHeader('Content-Security-Policy', vec['upgrade-insecure-requests'])
+          ;
       }
 
       $event->setResponse($response);

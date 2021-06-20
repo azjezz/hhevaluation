@@ -39,11 +39,11 @@ final class MigrateCommand extends Command\Command {
         version TEXT NOT NULL,
         detailed_version TEXT NOT NULL,
         exit_code INT NOT NULL,
-        stdout_content TEXT NOT NULL, 
+        stdout_content TEXT NOT NULL,
         stderr_content TEXT NOT NULL,
 
         PRIMARY KEY (id),
-        FOREIGN KEY (code_sample_id) REFERENCES code_sample(id)  
+        FOREIGN KEY (code_sample_id) REFERENCES code_sample(id)
       ) ENGINE=INNODB;',
       'CREATE TABLE IF NOT EXISTS type_checker_result (
         id INT NOT NULL AUTO_INCREMENT,
@@ -51,11 +51,11 @@ final class MigrateCommand extends Command\Command {
         version TEXT NOT NULL,
         detailed_version TEXT NOT NULL,
         exit_code INT NOT NULL,
-        stdout_content TEXT NOT NULL, 
+        stdout_content TEXT NOT NULL,
         stderr_content TEXT NOT NULL,
 
         PRIMARY KEY (id),
-        FOREIGN KEY (code_sample_id) REFERENCES code_sample(id)  
+        FOREIGN KEY (code_sample_id) REFERENCES code_sample(id)
       ) ENGINE=INNODB;',
     ],
   ];

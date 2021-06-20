@@ -1,9 +1,7 @@
 
 namespace HHEvaluation\Service;
 
-use namespace HH\Lib\Str;
 use namespace HHEvaluation;
-use namespace HHEvaluation\ValueObject;
 
 final class Database {
   const type Configuration = shape(

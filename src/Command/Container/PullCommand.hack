@@ -4,7 +4,7 @@ namespace HHEvaluation\Command\Container;
 use namespace HH\Lib\Str;
 use namespace Nuxed\Console\Command;
 use namespace HHEvaluation;
-use namespace HHEvaluation\{HHVM, Service};
+use namespace HHEvaluation\HHVM;
 
 final class PullCommand extends Command\Command {
   <<__Override>>

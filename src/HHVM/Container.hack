@@ -1,7 +1,7 @@
 
 namespace HHEvaluation\HHVM;
 
-use namespace HH\Lib\{Str, Vec, IO, File};
+use namespace HH\Lib\{File, Str, Vec};
 use namespace Nuxed\Process;
 
 final class Container {
@@ -21,7 +21,7 @@ final class Container {
   }
 
   /**
-   * Get Container by ID, or null if it does not exist. 
+   * Get Container by ID, or null if it does not exist.
    */
   public static async function get(string $id): Awaitable<?this> {
     list($_, $stdout, $_) = await self::sh('docker', vec[

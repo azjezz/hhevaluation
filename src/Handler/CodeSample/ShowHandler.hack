@@ -1,9 +1,8 @@
 namespace HHEvaluation\Handler\CodeSample;
 
 use namespace HHEvaluation;
-use namespace HH\Lib\C;
 use namespace HHEvaluation\{Model, Template};
-use namespace Nuxed\Http\{Handler, Message, Exception};
+use namespace Nuxed\Http\{Exception, Handler, Message};
 
 final class ShowHandler implements Handler\IHandler {
   public async function handle(

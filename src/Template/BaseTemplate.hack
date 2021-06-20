@@ -2,25 +2,19 @@
 namespace HHEvaluation\Template;
 
 use type Facebook\XHP\HTML\{
+  a,
   body,
+  div,
   doctype,
+  h2,
   head,
+  hr,
   html,
   link,
   meta,
-  title,
   script,
-  a,
-  br,
-  code,
-  div,
-  h2,
-  hr,
-  option,
-  pre,
-  select,
   span,
-  textarea,
+  title,
 };
 
 final class BaseTemplate {

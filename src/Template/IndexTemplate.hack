@@ -1,17 +1,10 @@
 
 namespace HHEvaluation\Template;
 
-use namespace HHEvaluation\HHVM;
 use type Facebook\XHP\HTML\{
-  a,
+  button,
   div,
   form,
-  h2,
-  hr,
-  button,
-  input,
-  option,
-  select,
   span,
   textarea,
 };

@@ -2,19 +2,13 @@
 namespace HHEvaluation\Template\CodeSample;
 
 use namespace HHEvaluation\{HHVM, Model, Template};
-use namespace HH\Lib\Str;
 
 use type Facebook\XHP\HTML\{
-  a,
-  br,
   code,
   div,
-  h2,
-  hr,
   option,
   pre,
   select,
-  span,
   textarea,
 };
 

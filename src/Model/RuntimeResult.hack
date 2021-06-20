@@ -26,6 +26,7 @@ final class RuntimeResult extends AbstractModel {
     );
   }
 
+  <<__Override>>
   static protected function getInsertQuery(
     this::Structure $structure,
   ): SQL\Query {
@@ -40,6 +41,7 @@ final class RuntimeResult extends AbstractModel {
     );
   }
 
+  <<__Override>>
   static protected function getSelectQuery(
     this::IdentifierType $identifier,
   ): SQL\Query {
@@ -49,6 +51,7 @@ final class RuntimeResult extends AbstractModel {
     );
   }
 
+  <<__Override>>
   protected static function getUpdateQuery(
     this::IdentifierType $identifier,
     this::Structure $structure,

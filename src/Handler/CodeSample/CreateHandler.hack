@@ -2,7 +2,6 @@ namespace HHEvaluation\Handler\CodeSample;
 
 use namespace HHEvaluation;
 use namespace HHEvaluation\Model;
-use namespace HHEvaluation\{HHVM, Service};
 use namespace Nuxed\Http\{Handler, Message};
 use namespace Facebook\TypeSpec;
 

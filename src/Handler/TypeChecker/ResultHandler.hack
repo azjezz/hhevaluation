@@ -2,8 +2,8 @@
 namespace HHEvaluation\Handler\TypeChecker;
 
 use namespace HHEvaluation;
-use namespace HHEvaluation\{Model, HHVM, Service};
-use namespace Nuxed\Http\{Handler, Message, Exception};
+use namespace HHEvaluation\{HHVM, Model};
+use namespace Nuxed\Http\{Exception, Handler, Message};
 
 final class ResultHandler implements Handler\IHandler {
   const type Request = shape(

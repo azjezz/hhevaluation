@@ -1,6 +1,6 @@
 namespace HHEvaluation\Model;
 
-use namespace HH\Lib\{C, Str, SQL, Vec};
+use namespace HH\Lib\{C, SQL};
 use namespace HHEvaluation\Service;
 use namespace Facebook\TypeSpec;
 

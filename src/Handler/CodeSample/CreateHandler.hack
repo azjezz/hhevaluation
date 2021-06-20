@@ -12,7 +12,13 @@ final class CreateHandler implements Handler\IHandler {
     $structure = TypeSpec\of<Model\CodeSample::Structure>()
       ->assertType($request->getParsedBody());
 
-    $code_sample = await Model\CodeSample::create($structure);
+    $pre_existing_code_sample = await Model\CodeSample::findDuplicate($structure);
+    if ($pre_existing_code_sample is nonnull) {
+     // avoid recreating/executing the same code twice.
+     $code_sample = $pre_existing_code_sample;
+    } else {
+      $code_sample = await Model\CodeSample::create($structure);
+    }
 
     return Message\Response\redirect(
       Message\uri('/c/'.$code_sample->getIdentifier()),

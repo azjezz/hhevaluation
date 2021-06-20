@@ -9,6 +9,17 @@ final class CodeSample extends AbstractModel {
     'ini_configuration' => string,
   );
 
+  public static async function findDuplicate(
+    this::Structure $structure
+  ): Awaitable<?this> {
+    return await static::findOneUsingQuery(new SQL\Query(
+      'SELECT * FROM code_sample WHERE code = %s AND hh_configuration = %s AND ini_configuration = %s',
+      $structure['code'],
+      $structure['hh_configuration'],
+      $structure['ini_configuration'],
+    ));
+  }
+
   <<__Override>>
   protected static function getInsertQuery(
     this::Structure $structure,

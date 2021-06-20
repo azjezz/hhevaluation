@@ -1,4 +1,5 @@
 
+
 namespace HHEvaluation\Command\Database;
 
 use namespace HH\Lib\Str;
@@ -76,29 +77,45 @@ final class MigrateCommand extends Command\Command {
     $connection = await Service\Database::get()
       |> $$->connection;
 
-    foreach (static::MIGRATIONS as $name => $queries) {
-      await $this->output->writeln('');
-      await $this->output
-        ->writeln(Str\format('<fg=yellow>running "%s" migration</>', $name));
-      await $this->output->writeln('');
+    await $connection->query(
+      'CREATE TABLE IF NOT EXISTS migrations (version VARCHAR(255) NOT NULL)',
+    );
 
-      foreach ($queries as $query) {
-        concurrent {
-          await $this->output
-            ->writeln(Str\format('   <fg=green>-></> %s', $query));
-          await $connection->query($query);
-          await $this->output->writeln('');
-        }
-      }
+    foreach (static::MIGRATIONS as $version => $queries) {
+      $already_exists = await $connection->queryf(
+        'SELECT * FROM migrations WHERE version = %s',
+        $version,
+      );
 
-      await $this->output
-        ->writeln(
-          '<fg=green>------------------------------------------------</>',
+      if (0 === $already_exists->numRows()) {
+        await $connection->queryf(
+          'INSERT INTO migrations (version) VALUES (%s)',
+          $version,
         );
+
+        await $this->output->writeln('');
+        await $this->output
+          ->writeln(Str\format('<fg=yellow>running "%s" migration</>', $version));
+        await $this->output->writeln('');
+
+        foreach ($queries as $query) {
+          concurrent {
+            await $this->output
+              ->writeln(Str\format('   <fg=green>-></> %s', $query));
+            await $connection->query($query);
+            await $this->output->writeln('');
+          }
+        }
+
+        await $this->output
+          ->writeln(
+            '<fg=green>------------------------------------------------</>',
+          );
+      }
     }
 
     await $this->output->writeln('');
-    await $this->output->writeln('<fg=green>success.</>');
+    await $this->output->writeln('<fg=green>done.</>');
 
     return Command\ExitCode::SUCCESS;
   }

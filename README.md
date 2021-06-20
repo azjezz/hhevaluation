@@ -5,8 +5,8 @@
 ### Install the project
 
 ```sh
-git clone git@github.com:azjezz/HHEvaluation.git hhevaluation
-cd hhevaluation
+git clone git@github.com:azjezz/HHEvaluation.git hh-evaluation
+cd hh-evaluation
 composer install
 ```
 
@@ -16,9 +16,16 @@ composer install
 docker-compose up -d
 ```
 
-### Setup database, and pull docker images
+### Run migrations
+
 ```sh
-hhvm bin/console hhevaluation:setup
+hhvm bin/console database:migrate
+```
+
+### Pull container images
+
+```sh
+hhvm bin/console container:pull
 ```
 
 ### Start the web server

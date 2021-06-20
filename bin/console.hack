@@ -12,7 +12,9 @@ async function console(): Awaitable<void> {
 
   $application = new Console\Application('HHEvaluation');
 
-  $application->add(new Command\SetupCommand());
+  $application
+    ->add(new Command\Database\MigrateCommand())
+    ->add(new Command\Container\PullCommand());
 
   await $application->run();
 }

@@ -10,6 +10,17 @@ use type Facebook\XHP\HTML\{
   meta,
   title,
   script,
+  a,
+  br,
+  code,
+  div,
+  h2,
+  hr,
+  option,
+  pre,
+  select,
+  span,
+  textarea,
 };
 
 final class BaseTemplate {
@@ -42,13 +53,24 @@ final class BaseTemplate {
             <script src="/public/js/main.js" />
           </head>
           <body class="bg-gray-100 font-sans leading-normal tracking-normal">
+            <div class="h-screen container w-full mx-auto px-10 py-8">
+              <div
+                class=
+                  "w-full px-4 md:px-6 text-xl text-gray-800 leading-normal">
+                <h2 class="text-xl">
+                  <a href="/">HHEvaluation</a>
+                  <span class="text-gray-600 text-base"> by <a
+                    class="underline"
+                    href="https://github.com/azjezz">azjezz</a>
+                  </span>
+                </h2>
+                <hr class="border border-red-500 mb-8 mt-4" />
+                {$child}
+              </div>
+            </div>
           </body>
         </html>
       </doctype>;
-
-    $index->getFirstChildx() as html
-      |> $$->getLastChildx() as body
-      |> $$->appendChild($child);
 
     return $index->toStringAsync();
   }

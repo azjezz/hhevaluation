@@ -10,13 +10,16 @@ async function main(): Awaitable<void> {
 
   Environment\add('APP_MODE', 'dev');
 
-  $cache = new Cache\Cache(new Cache\Store\ApcStore());
+  $cache = new Cache\Cache(new Cache\Store\NullStore());
   $application = new Http\Application(vec[], $cache);
 
   $application
     ->get('index', '/', new Handler\IndexHandler())
-    ->post('evaluate', '/e', new Handler\EvaluateHandler())
-    ->get('result', '/r/{identifier}', new Handler\ResultHandler());
+    ->post('code-sample:create', '/c', new Handler\CodeSample\CreateHandler())
+    ->get('code-sample:show', '/c/{id}', new Handler\CodeSample\ShowHandler())
+    ->get('type-checker:result', '/t/{id}/{version}', new Handler\TypeChecker\ResultHandler())
+    ->get('runtime:result', '/r/{id}/{version}', new Handler\Runtime\ResultHandler());
+  ;
 
   await $application->run();
 }

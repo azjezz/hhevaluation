@@ -15,7 +15,7 @@ final class CreateHandler implements Handler\IHandler {
     $code_sample = await Model\CodeSample::create($structure);
 
     return Message\Response\redirect(
-      Message\uri('/cs/'.$code_sample->getIdentifier()),
+      Message\uri('/c/'.$code_sample->getIdentifier()),
     );
   }
 }

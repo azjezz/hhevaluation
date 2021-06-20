@@ -49,7 +49,7 @@ abstract class AbstractModel {
       return null;
     }
 
-    $row = C\onlyx($results);
+    $row = $results[0];
 
     return new static(
       TypeSpec\int()->assertType($row[static::IdentifierColumn]),

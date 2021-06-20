@@ -10,7 +10,7 @@ async function main(): Awaitable<void> {
 
   Environment\add('APP_MODE', 'dev');
 
-  $cache = new Cache\Cache(new Cache\Store\NullStore());
+  $cache = new Cache\Cache(new Cache\Store\ApcStore());
   $application = new Http\Application(vec[], $cache);
 
   $application

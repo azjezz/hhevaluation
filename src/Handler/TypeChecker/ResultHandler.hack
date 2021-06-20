@@ -45,16 +45,12 @@ final class ResultHandler implements Handler\IHandler {
         'exit_code' => $exit_code,
         'stdout_content' => $stdout,
         'stderr_content' => $stderr,
+        'last_updated' => HHEvaluation\Utils::getCurrentDatetimeString(),
       ));
-    } else if (
-      $version === HHVM\Version::HHVM_NIGHTLY ||
-      $version === HHVM\Version::HHVM_LATEST
-    ) {
+    } else if ($result->isOutdated()) {
       // ensure that nightly/latest result is up to date.
       $container = await HHVM\Container::run($version);
       $detailed_version = await $container->getTypeCheckerVersion();
-      if ($detailed_version !== $result->getData()['detailed_version']) {
-        // our nightly result is outdated, let's re-run it.
         list($exit_code, $stdout, $stderr) =
           await $container->getTypeCheckerResult(
             $code_sample->getData()['code'],
@@ -68,8 +64,8 @@ final class ResultHandler implements Handler\IHandler {
           'exit_code' => $exit_code,
           'stdout_content' => $stdout,
           'stderr_content' => $stderr,
+          'last_updated' => HHEvaluation\Utils::getCurrentDatetimeString(),
         ));
-      }
     }
 
     return Message\Response\json($result->toDict());

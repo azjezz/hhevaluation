@@ -1,6 +1,7 @@
 namespace HHEvaluation\Model;
 
 use namespace HH\Lib\SQL;
+use namespace HHEvaluation;
 use namespace HHEvaluation\HHVM;
 
 final class TypeCheckerResult extends AbstractModel {
@@ -11,6 +12,7 @@ final class TypeCheckerResult extends AbstractModel {
     'exit_code' => int,
     'stdout_content' => string,
     'stderr_content' => string,
+    'last_updated' => string,
   );
 
   public static async function findOneByCodeSampleAndVersion(
@@ -26,18 +28,33 @@ final class TypeCheckerResult extends AbstractModel {
     );
   }
 
+  public function isOutdated(): bool {
+    if ($this->data['version'] === HHVM\Version::HHVM_NIGHTLY) {
+      // nightly is considered outdated if a day passed by.
+      return HHEvaluation\Utils::getDueDaysFromString($this->data['last_updated']) >= 1;
+    }
+
+    if ($this->data['version'] === HHVM\Version::HHVM_LATEST) {
+      // latest is only considered outdated after 4 days
+      return HHEvaluation\Utils::getDueDaysFromString($this->data['last_updated']) >= 4;
+    }
+
+    return false;
+  }
+
   <<__Override>>
   protected static function getInsertQuery(
     this::Structure $structure,
   ): SQL\Query {
     return new SQL\Query(
-      'INSERT INTO type_checker_result (code_sample_id, version, detailed_version, exit_code, stdout_content, stderr_content) VALUES (%d, %s, %s, %d, %s, %s)',
+      'INSERT INTO type_checker_result (code_sample_id, version, detailed_version, exit_code, stdout_content, stderr_content, last_updated) VALUES (%d, %s, %s, %d, %s, %s, %s)',
       $structure['code_sample_id'],
       $structure['version'],
       $structure['detailed_version'],
       $structure['exit_code'],
       $structure['stdout_content'],
       $structure['stderr_content'],
+      $structure['last_updated'],
     );
   }
 
@@ -57,13 +74,14 @@ final class TypeCheckerResult extends AbstractModel {
     this::Structure $structure,
   ): SQL\Query {
     return new SQL\Query(
-      'UPDATE code_sample SET code_sample_id = %d, version = %s, detailed_version = %s, exit_code = %d, stdout_content = %s, stderr_content = %s WHERE id = %d',
+      'UPDATE code_sample SET code_sample_id = %d, version = %s, detailed_version = %s, exit_code = %d, stdout_content = %s, stderr_content = %s, last_updated = %s WHERE id = %d',
       $structure['code_sample_id'],
       $structure['version'],
       $structure['detailed_version'],
       $structure['exit_code'],
       $structure['stdout_content'],
       $structure['stderr_content'],
+      $structure['last_updated'],
       $identifier,
     );
   }

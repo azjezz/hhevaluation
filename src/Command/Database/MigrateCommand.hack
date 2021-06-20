@@ -58,6 +58,10 @@ final class MigrateCommand extends Command\Command {
         FOREIGN KEY (code_sample_id) REFERENCES code_sample(id)
       ) ENGINE=INNODB;',
     ],
+    'version:3' => vec[
+      'ALTER TABLE runtime_result ADD COLUMN last_updated DATETIME DEFAULT CURRENT_TIMESTAMP',
+      'ALTER TABLE type_checker_result ADD COLUMN last_updated DATETIME DEFAULT CURRENT_TIMESTAMP',
+    ],
   ];
 
   <<__Override>>

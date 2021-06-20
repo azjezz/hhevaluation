@@ -15,8 +15,8 @@
         version = option.value;
 
         promises[version] = (async (version) => {
-          let runtime = await fetch('/r/' + identifier + '/' + version).then((response) => response.json());
-          let type_checker = await fetch('/t/' + identifier + '/' + version).then((response) => response.json());
+          let runtime = await fetch_with_retry('/r/' + identifier + '/' + version).then((response) => response.json());
+          let type_checker = await fetch_with_retry('/t/' + identifier + '/' + version).then((response) => response.json());
 
           return { runtime: runtime, type_checker: type_checker };
         })(version);
@@ -117,4 +117,22 @@ async function update_type_checker_result(version, promises) {
   }
 
   document.getElementById('type_checker.version_details').parentElement.classList.remove('hidden');
+}
+
+/**
+ * @param {String} url
+ * @param {Number} attempts
+ * 
+ * @returns {Promise<Response>}
+ */
+async function fetch_with_retry(url, attempts = 3) {
+  let response;
+  for (let i = 0; i < attempts; i++) {
+    response = await fetch(url)
+    if (response.status === 200) {
+      return response
+    }
+  }
+
+  throw new Error('Failed to fetch ' + url)
 }

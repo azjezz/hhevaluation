@@ -88,11 +88,6 @@ final class MigrateCommand extends Command\Command {
       );
 
       if (0 === $already_exists->numRows()) {
-        await $connection->queryf(
-          'INSERT INTO migrations (version) VALUES (%s)',
-          $version,
-        );
-
         await $this->output->writeln('');
         await $this->output
           ->writeln(Str\format('<fg=yellow>running "%s" migration</>', $version));
@@ -111,6 +106,11 @@ final class MigrateCommand extends Command\Command {
           ->writeln(
             '<fg=green>------------------------------------------------</>',
           );
+
+        await $connection->queryf(
+          'INSERT INTO migrations (version) VALUES (%s)',
+          $version,
+        );
       }
     }
 

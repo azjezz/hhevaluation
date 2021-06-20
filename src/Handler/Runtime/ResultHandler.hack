@@ -50,22 +50,31 @@ final class ResultHandler implements Handler\IHandler {
       // ensure that nightly/latest result is up to date.
       $container = await HHVM\Container::run($version);
       $detailed_version = await $container->getRuntimeVersion();
-        list($exit_code, $stdout, $stderr) = await $container->getRuntimeResult(
-          $code_sample->getData()['code'],
-          $code_sample->getData()['ini_configuration'],
-        );
+      list($exit_code, $stdout, $stderr) = await $container->getRuntimeResult(
+        $code_sample->getData()['code'],
+        $code_sample->getData()['ini_configuration'],
+      );
 
-        $result = await $result->update(shape(
-          'code_sample_id' => $code_sample->getIdentifier(),
-          'version' => $version,
-          'detailed_version' => $detailed_version,
-          'exit_code' => $exit_code,
-          'stdout_content' => $stdout,
-          'stderr_content' => $stderr,
+      $result = await $result->update(shape(
+        'code_sample_id' => $code_sample->getIdentifier(),
+        'version' => $version,
+        'detailed_version' => $detailed_version,
+        'exit_code' => $exit_code,
+        'stdout_content' => $stdout,
+        'stderr_content' => $stderr,
         'last_updated' => HHEvaluation\Utils::getCurrentDatetimeString(),
-        ));
+      ));
     }
 
-    return Message\Response\json($result->toDict());
+    return Message\Response\json($result->toDict())
+      |> Message\Response\with_cache_control_directive($$, 'must-revalidate')
+      |> Message\Response\with_cache_control_directive($$, 'public')
+      |> Message\Response\with_max_age($$, 86400)
+      |> Message\Response\with_last_modified(
+        $$,
+        HHEvaluation\Utils::getDateTimeFromString(
+          $result->getData()['last_updated'],
+        )->getTimestamp(),
+      );
   }
 }

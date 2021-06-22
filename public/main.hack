@@ -5,12 +5,10 @@ use namespace Facebook\AutoloadMap;
 
 <<__EntryPoint>>
 async function main(): Awaitable<void> {
-  require_once __DIR__.'/../vendor/autoload.hack';
-  AutoloadMap\initialize();
-
   Environment\add('APP_MODE', 'dev');
 
-  $listeners = new EventDispatcher\ListenerProvider\AttachableListenerProvider();
+  $listeners =
+    new EventDispatcher\ListenerProvider\AttachableListenerProvider();
   $listeners->listen<Http\Event\BeforeEmitEvent>(
     EventDispatcher\EventListener\callable<Http\Event\BeforeEmitEvent>(async (
       $event,
@@ -21,8 +19,10 @@ async function main(): Awaitable<void> {
       if (Environment\mode() === Environment\Mode::PRODUCTION) {
         $response = $response
           ->withHeader('Strict-Transport-Security', vec['max-age=31536000'])
-          ->withHeader('Content-Security-Policy', vec['upgrade-insecure-requests'])
-          ;
+          ->withHeader(
+            'Content-Security-Policy',
+            vec['upgrade-insecure-requests'],
+          );
       }
 
       $event->setResponse($response);

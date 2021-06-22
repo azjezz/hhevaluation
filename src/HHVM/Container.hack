@@ -108,15 +108,20 @@ final class Container {
     string $code,
     string $ini_configuration,
   ): Awaitable<(int, string, string)> {
-    concurrent {
-      await $this->write('/home/main.hack', $code);
-      await $this->write('/home/configuration.ini', $ini_configuration);
+    $file_awaitable = $this->write('/home/main.hack', $code);
+    if ('' !== Str\trim($ini_configuration)) {
+      concurrent {
+        await $file_awaitable;
+        await $this->write('/home/configuration.ini', $ini_configuration);
+      }
+
+      return await $this->execute(
+        '/home',
+        vec['hhvm', '-c', 'configuration.ini', 'main.hack'],
+      );
     }
 
-    return await $this->execute(
-      '/home',
-      vec['hhvm', '-c', 'configuration.ini', 'main.hack'],
-    );
+    return await $this->execute('/home', vec['hhvm', 'main.hack']);
   }
 
   public async function getTypeCheckerResult(
@@ -130,16 +135,13 @@ final class Container {
       await $this->execute('/home', vec['hh_server', '-d', '/home']);
     }
 
-    return await $this->execute(
-      '/home',
-      vec['hh_client', '--error-format', 'highlighted'],
-    );
+    return await $this->execute('/home', vec['hh_client', '--error-format', 'highlighted']);
   }
 
   /**
    * Execute the given command inside the docker container.
    */
-  public function execute(
+  private function execute(
     string $directory,
     vec<string> $arguments,
   ): Awaitable<(int, string, string)> {

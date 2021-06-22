@@ -5,6 +5,9 @@ use namespace Facebook\AutoloadMap;
 
 <<__EntryPoint>>
 async function main(): Awaitable<void> {
+  require_once __DIR__.'/../vendor/autoload.hack';
+  AutoloadMap\initialize();
+
   Environment\add('APP_MODE', 'dev');
 
   $listeners =

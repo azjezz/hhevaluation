@@ -46,7 +46,7 @@ final class Container {
    */
   public static async function run(
     Version $version,
-    int $ttl = 360,
+    int $ttl = 90,
   ): Awaitable<this> {
     list($stdout, $_stderr) = await Process\execute(
       'docker',

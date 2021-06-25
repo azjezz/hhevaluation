@@ -17,4 +17,6 @@ echo "hhvm.repo.central.path = \""$(pwd)"/build/hhvm.hhbc\"" >> server.ini
 
 hhvm -m daemon -c server.ini -p 8080
 
+sleep 2
+
 ab -c 100 -n 100000 http://localhost:8080/

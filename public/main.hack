@@ -12,26 +12,9 @@ async function main(): Awaitable<void> {
 
   $listeners =
     new EventDispatcher\ListenerProvider\AttachableListenerProvider();
+
   $listeners->listen<Http\Event\BeforeEmitEvent>(
-    EventDispatcher\EventListener\callable<Http\Event\BeforeEmitEvent>(async (
-      $event,
-    ) ==> {
-      $response = $event->getResponse()
-        |> $$->withHeader('X-Powered-By', vec['Nuxed']);
-
-      if (Environment\mode() === Environment\Mode::PRODUCTION) {
-        $response = $response
-          ->withHeader('Strict-Transport-Security', vec['max-age=31536000'])
-          ->withHeader(
-            'Content-Security-Policy',
-            vec['upgrade-insecure-requests'],
-          );
-      }
-
-      $event->setResponse($response);
-
-      return $event;
-    }),
+    new EventListener\SecurityHeadersEventListener(),
   );
 
   $cache = new Cache\Cache(new Cache\Store\ApcStore());
@@ -43,15 +26,14 @@ async function main(): Awaitable<void> {
     ->get('code-sample:show', '/c/{id}', new Handler\CodeSample\ShowHandler())
     ->get(
       'type-checker:result',
-      '/t/{id}/{version}',
+      '/type-checker/result/{id}/{version}',
       new Handler\TypeChecker\ResultHandler(),
     )
     ->get(
       'runtime:result',
-      '/r/{id}/{version}',
+      '/runtime/result/{id}/{version}',
       new Handler\Runtime\ResultHandler(),
     );
-  ;
 
   await $application->run();
 }

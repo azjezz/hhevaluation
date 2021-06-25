@@ -10,7 +10,7 @@ final class CodeSample extends AbstractModel {
   );
 
   public static async function findDuplicate(
-    this::Structure $structure
+    this::Structure $structure,
   ): Awaitable<?this> {
     return await static::findOneUsingQuery(new SQL\Query(
       'SELECT * FROM code_sample WHERE code = %s AND hh_configuration = %s AND ini_configuration = %s',

@@ -3,7 +3,7 @@ namespace HHEvaluation\Service;
 
 use namespace HHEvaluation;
 
-final class Database {
+final class Database implements \IAsyncDisposable {
   const type Configuration = shape(
     'host' => string,
     'port' => int,
@@ -12,19 +12,15 @@ final class Database {
     'database' => string,
   );
 
-  private static ?Database $instance = null;
-
   public function __construct(public \AsyncMysqlConnection $connection) {
   }
 
+  <<__ReturnDisposable>>
   public static async function get(): Awaitable<Database> {
-    if (null !== self::$instance) {
-      return self::$instance;
-    }
-
     $configuration = await HHEvaluation\ConfigurationLoader::load<
       this::Configuration,
     >('database');
+
 
     $connection = await \AsyncMysqlClient::connect(
       $configuration['host'],
@@ -34,8 +30,10 @@ final class Database {
       $configuration['password'],
     );
 
-    self::$instance = new self($connection);
+    return new self($connection);
+  }
 
-    return self::$instance;
+  public async function __disposeAsync(): Awaitable<void> {
+    $this->connection->close();
   }
 }

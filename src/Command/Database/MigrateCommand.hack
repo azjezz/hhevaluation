@@ -63,6 +63,20 @@ final class MigrateCommand extends Command\Command {
       'ALTER TABLE runtime_result ADD COLUMN last_updated DATETIME DEFAULT CURRENT_TIMESTAMP',
       'ALTER TABLE type_checker_result ADD COLUMN last_updated DATETIME DEFAULT CURRENT_TIMESTAMP',
     ],
+    'version:4' => vec[
+      'CREATE TABLE IF NOT EXISTS task (
+        id INT NOT NULL AUTO_INCREMENT,
+        code_sample_id INT NOT NULL,
+        version TEXT NOT NULL,
+        executed TINYINT NOT NULL,
+
+        PRIMARY KEY (id),
+        FOREIGN KEY (code_sample_id) REFERENCES code_sample(id)
+      ) ENGINE=INNODB;',
+    ],
+    'version:5' => vec[
+      'DROP TABLE task;',
+    ],
   ];
 
   <<__Override>>
@@ -74,43 +88,46 @@ final class MigrateCommand extends Command\Command {
 
   <<__Override>>
   public async function run(): Awaitable<int> {
-    $connection = await Service\Database::get()
-      |> $$->connection;
+    await using ($database = await Service\Database::get()) {
+      $connection = $database->connection;
 
-    await $connection->query(
-      'CREATE TABLE IF NOT EXISTS migrations (version VARCHAR(255) NOT NULL)',
-    );
-
-    foreach (static::MIGRATIONS as $version => $queries) {
-      $already_exists = await $connection->queryf(
-        'SELECT * FROM migrations WHERE version = %s',
-        $version,
+      await $connection->query(
+        'CREATE TABLE IF NOT EXISTS migrations (version VARCHAR(255) NOT NULL)',
       );
 
-      if (0 === $already_exists->numRows()) {
-        await $this->output->writeln('');
-        await $this->output
-          ->writeln(Str\format('<fg=yellow>running "%s" migration</>', $version));
-        await $this->output->writeln('');
-
-        foreach ($queries as $query) {
-          concurrent {
-            await $this->output
-              ->writeln(Str\format('   <fg=green>-></> %s', $query));
-            await $connection->query($query);
-            await $this->output->writeln('');
-          }
-        }
-
-        await $this->output
-          ->writeln(
-            '<fg=green>------------------------------------------------</>',
-          );
-
-        await $connection->queryf(
-          'INSERT INTO migrations (version) VALUES (%s)',
+      foreach (static::MIGRATIONS as $version => $queries) {
+        $already_exists = await $connection->queryf(
+          'SELECT * FROM migrations WHERE version = %s',
           $version,
         );
+
+        if (0 === $already_exists->numRows()) {
+          await $this->output->writeln('');
+          await $this->output
+            ->writeln(
+              Str\format('<fg=yellow>running "%s" migration</>', $version),
+            );
+          await $this->output->writeln('');
+
+          foreach ($queries as $query) {
+            concurrent {
+              await $this->output
+                ->writeln(Str\format('   <fg=green>-></> %s', $query));
+              await $connection->query($query);
+              await $this->output->writeln('');
+            }
+          }
+
+          await $this->output
+            ->writeln(
+              '<fg=green>------------------------------------------------</>',
+            );
+
+          await $connection->queryf(
+            'INSERT INTO migrations (version) VALUES (%s)',
+            $version,
+          );
+        }
       }
     }
 

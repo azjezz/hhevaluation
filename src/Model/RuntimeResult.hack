@@ -15,13 +15,36 @@ final class RuntimeResult extends AbstractModel {
     'last_updated' => string,
   );
 
+  /**
+   * Find the first $limit results where the version is $version,
+   * and last_updated is lower than $lastest_build_date.
+   */
+  public static async function findOutdated(
+    HHVM\Version $version,
+    \DateTimeImmutable $latest_build_date,
+    int $limit = 100,
+  ): Awaitable<vec<this>> {
+    return await static::findUsingQuery(new SQL\Query(
+      'SELECT * FROM runtime_result WHERE DATE(last_updated) < %s AND version = %s LIMIT %d',
+      $latest_build_date->format('Y-m-d'),
+      $version,
+      $limit,
+    ));
+  }
+
   public function isOutdated(): bool {
     if ($this->data['version'] === HHVM\Version::HHVM_NIGHTLY) {
-      return HHEvaluation\Utils::getDueDaysFromString($this->data['last_updated']) >= 1;
+      return HHEvaluation\Utils::getDueDaysFromString(
+        $this->data['last_updated'],
+      ) >=
+        1;
     }
 
     if ($this->data['version'] === HHVM\Version::HHVM_LATEST) {
-      return HHEvaluation\Utils::getDueDaysFromString($this->data['last_updated']) >= 4;
+      return HHEvaluation\Utils::getDueDaysFromString(
+        $this->data['last_updated'],
+      ) >=
+        4;
     }
 
     return false;
@@ -72,7 +95,7 @@ final class RuntimeResult extends AbstractModel {
     this::Structure $structure,
   ): SQL\Query {
     return new SQL\Query(
-      'UPDATE code_sample SET code_sample_id = %d, version = %s, detailed_version = %s, exit_code = %d, stdout_content = %s, stderr_content = %s, last_updated = %s WHERE id = %d',
+      'UPDATE runtime_result SET code_sample_id = %d, version = %s, detailed_version = %s, exit_code = %d, stdout_content = %s, stderr_content = %s, last_updated = %s WHERE id = %d',
       $structure['code_sample_id'],
       $structure['version'],
       $structure['detailed_version'],

@@ -14,7 +14,8 @@ async function console(): Awaitable<void> {
 
   $application
     ->add(new Command\Database\MigrateCommand())
-    ->add(new Command\Container\PullCommand());
+    ->add(new Command\Container\PullCommand())
+    ->add(new Command\Build\NightlyCommand());
 
   await $application->run();
 }

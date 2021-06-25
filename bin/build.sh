@@ -2,6 +2,8 @@ APP_MODE=prod
 composer install --no-dev
 composer dump-autoload
 
+hhvm bin/console.hack database:migrate
+
 rm -rf vendor/composer/* vendor/bin/* build/*
 rm -f vendor/autoload.php
 
@@ -15,5 +17,4 @@ rm var/logs.txt
 
 hhvm -m daemon -c server.ini
 
-# warmup the JIT :)
 ab -c 100 -n 100000 http://localhost:8080/

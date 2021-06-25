@@ -15,122 +15,68 @@
         version = option.value;
 
         promises[version] = {
-          runtime: fetch_with_retry('/r/' + identifier + '/' + version).then((response) => response.json()),
-          type_checker: fetch_with_retry('/t/' + identifier + '/' + version).then((response) => response.json())
+          runtime: get_result('runtime', identifier, version),
+          type_checker: get_result('type-checker', identifier, version),
         };
       }
 
       let update = async () => {
         selector.disabled = true;
 
-        await update_results(selector.value, promises);
+        hide_result('type-checker')
+        hide_result('runtime')
 
         let url = new URL(window.location);
         url.searchParams.set('version', selector.value);
         window.history.pushState({}, '', url);
+
+        update_result('type-checker', await promises[selector.value]['type_checker'])
+        update_result('runtime', await promises[selector.value]['runtime'])
 
         selector.disabled = false;
       };
 
       selector.addEventListener('change', update);
 
-
       await update();
     }
   });
 })();
 
-/**
- * @param {String} version
- * 
- * @return {Promise<void>}
- */
-async function update_results(version, promises) {
-  await Promise.all([
-    update_runtime_result(version, promises),
-    update_type_checker_result(version, promises)
-  ]);
+function hide_result(type) {
+  document.getElementById(`${type}.animation`).classList.remove('hidden');
+
+  document.getElementById(`${type}.stdout`).parentElement.classList.add('hidden');
+  document.getElementById(`${type}.stderr`).parentElement.classList.add('hidden');
+  document.getElementById(`${type}.version_details`).parentElement.classList.add('hidden');
 }
 
-/**
- * @param {String} version
- * 
- * @return {Promise<void>}
- */
-async function update_runtime_result(version, promises) {
-  document.getElementById('runtime.animation').classList.remove('hidden');
+function update_result(type, result) {
+  document.getElementById(`${type}.stdout`).innerText = result.stdout_content;
+  document.getElementById(`${type}.stderr`).innerText = result.stderr_content;
+  document.getElementById(`${type}.version_details`).innerText = result.detailed_version;
 
-  document.getElementById('runtime.stdout').parentElement.classList.add('hidden');
-  document.getElementById('runtime.stderr').parentElement.classList.add('hidden');
-  document.getElementById('runtime.version_details').parentElement.classList.add('hidden');
-
-  let result = await promises[version].runtime;
-
-  document.getElementById('runtime.stdout').innerText = result.stdout_content.trimStart();
-  document.getElementById('runtime.stderr').innerText = result.stderr_content.trimStart();
-  document.getElementById('runtime.version_details').innerText = result.detailed_version.trimStart();
-
-  document.getElementById('runtime.animation').classList.add('hidden');
+  document.getElementById(`${type}.animation`).classList.add('hidden');
 
   // keep the element hidden if the content is empty.
   if ('' !== result.stdout_content.trim()) {
-    document.getElementById('runtime.stdout').parentElement.classList.remove('hidden');
-  }
-
-  // keep the element hidden if the content is empty.
-  if ('' !== result.stderr_content.trim()) {
-    document.getElementById('runtime.stderr').parentElement.classList.remove('hidden');
-  }
-
-  document.getElementById('runtime.version_details').parentElement.classList.remove('hidden');
-}
-
-/**
- * @param {String} version
- * 
- * @return {Promise<void>}
- */
-async function update_type_checker_result(version, promises) {
-  document.getElementById('type_checker.animation').classList.remove('hidden');
-
-  document.getElementById('type_checker.stdout').parentElement.classList.add('hidden');
-  document.getElementById('type_checker.stderr').parentElement.classList.add('hidden');
-  document.getElementById('type_checker.version_details').parentElement.classList.add('hidden');
-
-  let result = await promises[version].type_checker;
-
-  document.getElementById('type_checker.stdout').innerText = result.stdout_content.trimStart();
-  document.getElementById('type_checker.stderr').innerText = result.stderr_content.trimStart();
-  document.getElementById('type_checker.version_details').innerText = result.detailed_version.trimStart();
-
-  document.getElementById('type_checker.animation').classList.add('hidden');
-
-  // keep the element hidden if the content is empty.
-  if ('' !== result.stdout_content.trim()) {
-    document.getElementById('type_checker.stdout').parentElement.classList.remove('hidden');
+    document.getElementById(`${type}.stdout`).parentElement.classList.remove('hidden');
   }
 
   if ('' !== result.stderr_content.trim()) {
-    document.getElementById('type_checker.stderr').parentElement.classList.remove('hidden');
+    document.getElementById(`${type}.stderr`).parentElement.classList.remove('hidden');
   }
 
-  document.getElementById('type_checker.version_details').parentElement.classList.remove('hidden');
+  document.getElementById(`${type}.version_details`).parentElement.classList.remove('hidden');
 }
 
-/**
- * @param {String} url
- * @param {Number} attempts
- * 
- * @returns {Promise<Response>}
- */
-async function fetch_with_retry(url, attempts = 3) {
-  let response;
-  for (let i = 0; i < attempts; i++) {
-    response = await fetch(url)
+async function get_result(type, identifier, version) {
+  let response; for (let i = 0; i < 3; i++) {
+    response = await fetch('/' + type + '/result/' + identifier + '/' + version)
     if (response.status === 200) {
-      return response
+      return response.json()
     }
   }
 
-  throw new Error('Failed to fetch ' + url)
+  throw new Error(`Failed to fetch HHVM ${version} ${type} results for ${identifier}`);
 }

@@ -1,6 +1,6 @@
 namespace HHEvaluation\Model;
 
-use namespace HH\Lib\{C, SQL};
+use namespace HH\Lib\{C, SQL, Vec};
 use namespace HHEvaluation\Service;
 use namespace Facebook\TypeSpec;
 
@@ -41,20 +41,26 @@ abstract class AbstractModel {
   protected static async function findOneUsingQuery(
     SQL\Query $query,
   ): Awaitable<?this> {
-    $results = await static::runQuery($query)
-      |> $$->dictRowsTyped();
-
-    $count = C\count($results);
-    if ($count === 0) {
+    $results = await self::findUsingQuery($query);
+    if (C\count($results) === 0) {
       return null;
     }
 
-    $row = $results[0];
+    return $results[0];
+  }
 
-    return new static(
-      TypeSpec\int()->assertType($row[static::IdentifierColumn]),
-      TypeSpec\of<this::Structure>()->coerceType($row),
-    );
+  protected static async function findUsingQuery(
+    SQL\Query $query,
+  ): Awaitable<vec<this>> {
+    return await static::runQuery($query)
+      |> $$->dictRowsTyped()
+      |> Vec\map(
+        $$,
+        ($row) ==> new static(
+          TypeSpec\int()->coerceType($row[static::IdentifierColumn]),
+          TypeSpec\of<this::Structure>()->coerceType($row),
+        ),
+      );
   }
 
   public static async function findOne(
@@ -84,12 +90,12 @@ abstract class AbstractModel {
   protected static async function runQuery(
     SQL\Query $query,
   ): Awaitable<\AsyncMysqlQueryResult> {
-    $connection = await Service\Database::get()
-      |> $$->connection;
+    await using ($database = await Service\Database::get()) {
+      $connection = $database->connection;
+      $result = await $connection->queryAsync($query);
 
-    $result = await $connection->queryAsync($query);
-
-    return $result;
+      return $result;
+    }
   }
 
   abstract protected static function getInsertQuery(

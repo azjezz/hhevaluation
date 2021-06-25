@@ -3,19 +3,12 @@ namespace HHEvaluation\Template\CodeSample;
 
 use namespace HHEvaluation\{HHVM, Model, Template};
 
-use type Facebook\XHP\HTML\{
-  code,
-  div,
-  option,
-  pre,
-  select,
-  textarea,
-};
+use type Facebook\XHP\HTML\{code, div, option, pre, select, textarea};
 
 final class ShowTemplate {
   public static function render(
     Model\CodeSample $code_sample,
-    ?string $selected_version
+    ?string $selected_version,
   ): Awaitable<string> {
     $versions = HHVM\Version::getValues();
     $selector =
@@ -28,7 +21,9 @@ final class ShowTemplate {
       </select>;
     foreach ($versions as $version) {
       if ((string)$version === $selected_version) {
-        $selector->appendChild(<option value={$version} selected={true}>{$version}</option>);
+        $selector->appendChild(
+          <option value={$version} selected={true}>{$version}</option>,
+        );
       } else {
         $selector->appendChild(<option value={$version}>{$version}</option>);
       }
@@ -115,7 +110,7 @@ final class ShowTemplate {
         <div
           class=
             "px-4 py-3 overflow-y-scroll h-96 bg-white rounded-md text-gray-900 border border-gray-900 rounded-md w-full">
-          <div class="animate-pulse flex space-x-4" id="type_checker.animation">
+          <div class="animate-pulse flex space-x-4" id="type-checker.animation">
             <div class="flex-1 space-y-4 py-1">
               <div class="h-4 bg-gray-400 rounded w-3/4"></div>
               <div class="space-y-2">
@@ -126,15 +121,15 @@ final class ShowTemplate {
           </div>
 
           <pre class="text-base text-red-500 mb-2 code font-mono hidden">
-            <code id="type_checker.stdout">Loading ...</code>
+            <code id="type-checker.stdout">Loading ...</code>
           </pre>
 
           <pre class="text-gray-600 mb-4 text-sm code font-mono hidden">
-            <code id="type_checker.stderr"></code>
+            <code id="type-checker.stderr"></code>
           </pre>
 
           <pre class="text-gray-500 text-xs code font-mono hidden">
-            <code id="type_checker.version_details"></code>
+            <code id="type-checker.version_details"></code>
           </pre>
         </div>
       </div>,

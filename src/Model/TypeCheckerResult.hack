@@ -28,18 +28,21 @@ final class TypeCheckerResult extends AbstractModel {
     );
   }
 
-  public function isOutdated(): bool {
-    if ($this->data['version'] === HHVM\Version::HHVM_NIGHTLY) {
-      // nightly is considered outdated if a day passed by.
-      return HHEvaluation\Utils::getDueDaysFromString($this->data['last_updated']) >= 1;
-    }
-
-    if ($this->data['version'] === HHVM\Version::HHVM_LATEST) {
-      // latest is only considered outdated after 4 days
-      return HHEvaluation\Utils::getDueDaysFromString($this->data['last_updated']) >= 4;
-    }
-
-    return false;
+  /**
+   * Find the first $limit results where the version is $version,
+   * and last_updated is lower than $lastest_build_date.
+   */
+  public static async function findOutdated(
+    HHVM\Version $version,
+    \DateTimeImmutable $latest_build_date,
+    int $limit = 100,
+  ): Awaitable<vec<this>> {
+    return await static::findUsingQuery(new SQL\Query(
+      'SELECT * FROM type_checker_result WHERE DATE(last_updated) < %s AND version = %s LIMIT %d',
+      $latest_build_date->format('Y-m-d'),
+      $version,
+      $limit,
+    ));
   }
 
   <<__Override>>
@@ -74,7 +77,7 @@ final class TypeCheckerResult extends AbstractModel {
     this::Structure $structure,
   ): SQL\Query {
     return new SQL\Query(
-      'UPDATE code_sample SET code_sample_id = %d, version = %s, detailed_version = %s, exit_code = %d, stdout_content = %s, stderr_content = %s, last_updated = %s WHERE id = %d',
+      'UPDATE type_checker_result SET code_sample_id = %d, version = %s, detailed_version = %s, exit_code = %d, stdout_content = %s, stderr_content = %s, last_updated = %s WHERE id = %d',
       $structure['code_sample_id'],
       $structure['version'],
       $structure['detailed_version'],

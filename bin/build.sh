@@ -1,11 +1,12 @@
 composer install --no-dev
 composer dump-autoload
 
+docker-compose up -d
+
 hhvm bin/console.hack build --production
 
 killall hhvm
 
-docker-compose up -d
 hhvm -m daemon -c server.ini -p 8080
 
 sleep 2

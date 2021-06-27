@@ -17,7 +17,7 @@ final abstract class BinaryStep extends Step {
   ): Awaitable<void> {
     $progress = new Feedback\ProgressBarFeedback(
       $output,
-      7,
+      8,
       '<fg=green>binary</>      :',
     );
 
@@ -30,6 +30,8 @@ final abstract class BinaryStep extends Step {
     if ($production) {
       $args[] = '--release';
     }
+
+    await $progress->advance();
 
     concurrent {
       await Process\execute('cargo', $args, __DIR__.'/../../');

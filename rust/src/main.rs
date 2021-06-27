@@ -46,7 +46,6 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         "-it",
         "--memory-reservation=150m",
         "--memory=180m",
-        "--cpus=2",
         &format!("hhvm/hhvm:{}", version).to_owned(),
     ])
     .await;

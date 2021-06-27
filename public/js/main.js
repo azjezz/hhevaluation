@@ -40,6 +40,7 @@
         promises[version] = get_result(identifier, version);
       }
 
+
       let update = async () => {
         selector.disabled = true;
 
@@ -49,7 +50,7 @@
         url.searchParams.set('version', selector.value);
         window.history.pushState({}, '', url);
 
-        update_result(await promises[selector.value])
+        await update_result(await promises[selector.value])
 
         selector.disabled = false;
       };
@@ -79,7 +80,9 @@ function hide_result() {
   document.getElementById('type_checker.stdout').parentElement.classList.remove('text-red-500');
 }
 
-function update_result(result) {
+async function update_result(result) {
+  result = await result.json()
+
   document.getElementById(`runtime.stdout`).innerText = result.runtime_stdout;
   document.getElementById(`runtime.stderr`).innerText = result.runtime_stderr;
   document.getElementById(`runtime.version_details`).innerText = result.runtime_detailed_version;
@@ -133,7 +136,7 @@ async function get_result(identifier, version) {
   let response; for (let i = 0; i < 3; i++) {
     response = await fetch('/c/' + identifier + '/result/' + version)
     if (response.status === 200) {
-      return response.json()
+      return response
     }
   }
 

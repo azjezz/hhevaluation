@@ -29,7 +29,6 @@ final abstract class BinaryStep extends Step {
 
     if ($production) {
       $args[] = '--release';
-      $args[] = '--offline';
     }
 
     concurrent {

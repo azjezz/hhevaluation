@@ -8,7 +8,6 @@ use std::env;
 use std::str;
 use std::string::String;
 use tokio::process::Command;
-use tokio::time;
 
 #[derive(RustcDecodable, RustcEncodable)]
 pub struct RuntimeResultStruct {
@@ -124,9 +123,13 @@ async fn docker(args: Vec<&str>) -> (i32, String, String) {
     }
 
     let output_future = command.output();
-    let output = time::timeout(time::Duration::from_secs(20), output_future)
+    // let output = time::timeout(time::Duration::from_secs(20), output_future)
+    //     .await
+    //     .expect("Execution timedout.")
+    //     .expect("Failed executing docker command.");
+
+    let output = output_future
         .await
-        .expect("Execution timedout.")
         .expect("Failed executing docker command.");
 
     (

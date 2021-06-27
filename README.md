@@ -16,17 +16,13 @@ composer install
 docker-compose up -d
 ```
 
-### Run migrations
+### Build the project
 
 ```sh
-hhvm bin/console database:migrate
+hhvm bin/console build
 ```
 
-### Pull container images
-
-```sh
-hhvm bin/console container:pull
-```
+> for production build, make sure to pass the `--production` flag.
 
 ### Start the web server
 

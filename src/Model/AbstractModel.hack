@@ -4,10 +4,7 @@ use namespace HH\Lib\{C, SQL, Vec};
 use namespace HHEvaluation\Service;
 use namespace Facebook\TypeSpec;
 
-<<
-  __ConsistentConstruct,
-  __Sealed(CodeSample::class, RuntimeResult::class, TypeCheckerResult::class),
->>
+<<__ConsistentConstruct, __Sealed(CodeSample::class, CodeSampleResult::class)>>
 abstract class AbstractModel {
   const string IdentifierColumn = 'id';
 

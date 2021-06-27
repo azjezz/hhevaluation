@@ -1,22 +1,13 @@
-APP_MODE=prod
 composer install --no-dev
 composer dump-autoload
 
-hhvm bin/console.hack database:migrate
+hhvm bin/console.hack build --production
 
 killall hhvm
 
-rm -rf vendor/composer/* vendor/bin/* build/*
-rm -f vendor/autoload.php
-
-rm .gitattributes .gitignore composer.json composer.lock hh_autoload.json hhast-lint.json README.md
-hhvm --hphp -t hhbc --input-dir . -o build
-
-echo "hhvm.repo.authoritative = true" >> server.ini
-echo "hhvm.repo.central.path = \""$(pwd)"/build/hhvm.hhbc\"" >> server.ini
-
+docker-compose up -d
 hhvm -m daemon -c server.ini -p 8080
 
 sleep 2
 
-ab -c 100 -n 100000 http://localhost:8080/
+ab -c 100 -n 10000 http://localhost:8080/

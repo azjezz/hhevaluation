@@ -1,0 +1,10 @@
+[package]
+name = "hh-execute"
+version = "0.1.0"
+authors = ["azjezz <azjezz@protonmail.com>"]
+edition = "2018"
+
+[dependencies]
+tokio = { version = "1", features = ["full"] }
+futures = { version = "0.3" }
+rustc-serialize = { version = "0.3" }

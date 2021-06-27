@@ -1,5 +1,4 @@
-
-namespace HHEvaluation\Handler\Runtime;
+namespace HHEvaluation\Handler;
 
 use namespace HHEvaluation;
 use namespace HHEvaluation\{HHVM, Model, Service};
@@ -11,18 +10,21 @@ final class ResultHandler implements Handler\IHandler {
   ): Awaitable<Message\IResponse> {
     $identifier = (int)$request->getAttribute<string>('id');
     $version = HHVM\Version::coerce($request->getAttribute<string>('version'));
+
     $code_sample = await Model\CodeSample::findOne($identifier);
     if (null === $code_sample || null === $version) {
       throw new Exception\NotFoundException();
     }
 
-    $result = await Model\RuntimeResult::findOneByCodeSampleAndVersion(
+    $result = await Model\CodeSampleResult::findOneByCodeSampleAndVersion(
       $code_sample,
       $version,
     );
 
-    if (null === $result) {
-      $result = await Service\Runtime::run($code_sample, $version);
+
+    if ($result is null) {
+      $structure = await HHEvaluation\HHExecute::run($code_sample, $version);
+      $result = await Model\CodeSampleResult::create($structure);
     }
 
     return Message\Response\json($result->toDict())

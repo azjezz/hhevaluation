@@ -1,4 +1,4 @@
-namespace HHEvaluation\Handler\CodeSample;
+namespace HHEvaluation\Handler;
 
 use namespace HHEvaluation;
 use namespace HHEvaluation\{Model, Template};
@@ -17,7 +17,7 @@ final class ShowHandler implements Handler\IHandler {
     $query = $request->getQueryParams();
     $selected_version = $query['version'] ?? null;
 
-    $content = await Template\CodeSample\ShowTemplate::render(
+    $content = await Template\ShowTemplate::render(
       $code_sample,
       $selected_version,
     );

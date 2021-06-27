@@ -2,3 +2,4 @@
 www.pid
 /var/*
 !/var/.gitkeep
+/rust/target/

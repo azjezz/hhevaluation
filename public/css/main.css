@@ -7,3 +7,11 @@
   text-transform: none;
   font-variant-ligatures: common-ligatures;
 }
+
+.tab-content {
+  display: none;
+}
+
+.tab-content.active {
+  display: block;
+}

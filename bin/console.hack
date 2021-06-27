@@ -10,12 +10,11 @@ async function console(): Awaitable<void> {
 
   Environment\add('APP_MODE', 'dev');
 
-  $application = new Console\Application('HHEvaluation');
+  $application = new Console\Application();
 
   $application
-    ->add(new Command\Database\MigrateCommand())
-    ->add(new Command\Container\PullCommand())
-    ->add(new Command\Build\NightlyCommand());
+    ->add(new Command\BuildCommand())
+    ->add(new Command\NightlyCommand());
 
   await $application->run();
 }

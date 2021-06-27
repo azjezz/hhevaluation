@@ -45,9 +45,13 @@ final class BaseTemplate {
             />
             <link href="/public/css/main.css" rel="stylesheet" />
             <script src="/public/js/main.js" />
+            <script
+              src=
+                "https://cdn.jsdelivr.net/gh/alpinejs/alpine@v2.x.x/dist/alpine.min.js"
+            />
           </head>
           <body class="bg-gray-100 font-sans leading-normal tracking-normal">
-            <div class="h-screen container w-full mx-auto px-10 py-8">
+            <div class="container w-full mx-auto py-4">
               <div
                 class=
                   "w-full px-4 md:px-6 text-xl text-gray-800 leading-normal">

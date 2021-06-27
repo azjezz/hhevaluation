@@ -1,12 +1,16 @@
+namespace HHEvaluation\BuildStep;
 
-
-namespace HHEvaluation\Command\Database;
-
-use namespace HH\Lib\Str;
 use namespace HHEvaluation\Service;
 use namespace Nuxed\Console\Command;
+use namespace HH\Lib\{C, File, Str, Vec, Math};
+use namespace Nuxed\Process;
+use namespace Nuxed\Console\Output;
+use namespace Nuxed\Console\Feedback;
 
-final class MigrateCommand extends Command\Command {
+/**
+ * Run database migrations
+ */
+final abstract class MigrationStep extends Step {
   const dict<string, vec<string>> MIGRATIONS = dict[
     'version:1' => vec[
       'CREATE TABLE IF NOT EXISTS evaluation_results (
@@ -77,17 +81,45 @@ final class MigrateCommand extends Command\Command {
     'version:5' => vec[
       'DROP TABLE task;',
     ],
+    'version:6' => vec[
+      'CREATE TABLE IF NOT EXISTS code_sample_result (
+        id INT NOT NULL AUTO_INCREMENT,
+        code_sample_id INT NOT NULL,
+        version TEXT NOT NULL,
+        detailed_version TEXT NOT NULL,
+        exit_code INT NOT NULL,
+        stdout_content TEXT NOT NULL,
+        stderr_content TEXT NOT NULL,
+        runtime_detailed_version TEXT NOT NULL,
+        runtime_exit_code INT NOT NULL,
+        runtime_stdout TEXT NOT NULL,
+        runtime_stderr TEXT NOT NULL,
+        type_checker_detailed_version TEXT NOT NULL,
+        type_checker_exit_code INT NOT NULL,
+        type_checker_stdout TEXT NOT NULL,
+        type_checker_stderr TEXT NOT NULL,
+        last_updated  DATETIME DEFAULT CURRENT_TIMESTAMP,
+        PRIMARY KEY (id),
+        FOREIGN KEY (code_sample_id) REFERENCES code_sample(id)
+      ) ENGINE=INNODB;',
+      'DROP TABLE runtime_result',
+      'DROP TABLE type_checker_result',
+    ],
   ];
 
-  <<__Override>>
-  public function configure(): void {
-    $this
-      ->setName('database:migrate')
-      ->setDescription('Migrate the database');
-  }
+  public static async function run(
+    Output\IOutput $output,
+    bool $production = false,
+  ): Awaitable<void> {
+    $count = Vec\map(self::MIGRATIONS, ($queries) ==> C\count($queries));
+    $total = Math\sum($count);
 
-  <<__Override>>
-  public async function run(): Awaitable<int> {
+    $progress = new Feedback\ProgressBarFeedback(
+      $output,
+      $total,
+      '<fg=green>migrations</>  :',
+    );
+
     await using ($database = await Service\Database::get()) {
       $connection = $database->connection;
 
@@ -102,38 +134,23 @@ final class MigrateCommand extends Command\Command {
         );
 
         if (0 === $already_exists->numRows()) {
-          await $this->output->writeln('');
-          await $this->output
-            ->writeln(
-              Str\format('<fg=yellow>running "%s" migration</>', $version),
-            );
-          await $this->output->writeln('');
-
           foreach ($queries as $query) {
             concurrent {
-              await $this->output
-                ->writeln(Str\format('   <fg=green>-></> %s', $query));
               await $connection->query($query);
-              await $this->output->writeln('');
+              await $progress->advance();
             }
           }
-
-          await $this->output
-            ->writeln(
-              '<fg=green>------------------------------------------------</>',
-            );
 
           await $connection->queryf(
             'INSERT INTO migrations (version) VALUES (%s)',
             $version,
           );
+        } else {
+          await $progress->advance(C\count($queries));
         }
       }
     }
 
-    await $this->output->writeln('');
-    await $this->output->writeln('<fg=green>done.</>');
-
-    return Command\ExitCode::SUCCESS;
+    await $progress->finish();
   }
 }

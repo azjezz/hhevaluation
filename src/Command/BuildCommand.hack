@@ -15,7 +15,7 @@ final class BuildCommand extends Command\Command {
     BuildStep\MigrationStep::class,
     BuildStep\BinaryStep::class,
     BuildStep\ModeStep::class,
-    // BuildStep\RepoAuthStep::class,
+    BuildStep\RepoAuthStep::class,
   ];
 
   <<__Override>>

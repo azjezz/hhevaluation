@@ -39,8 +39,12 @@ final abstract class BinaryStep extends Step {
         await $progress->advance();
       };
     }
+    if ($production) {
+      $executable_directory = __DIR__.'/../../rust/target/release/hh-execute';
+    } else {
+      $executable_directory = __DIR__.'/../../rust/target/debug/hh-execute';
+    }
 
-    $executable_directory = __DIR__.'/../../rust/target/release/hh-execute';
     await $progress->advance();
     $file = File\open_write_only(__DIR__.'/../../server.ini');
     await $progress->advance();

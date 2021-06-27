@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "b65d6f38df3b1ff3b6e8223d87aad5b0",
+    "content-hash": "6fbe4f063ee84dfff207814c2c38afc1",
     "packages": [
         {
             "name": "azjezz/http-normalizer",
@@ -365,18 +365,18 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/nuxed/nuxed.git",
-                "reference": "f9cb58b0b4b045a59b50d283e5661efd7412ce5d"
+                "reference": "8f070cf6287739064aa1fd10eb67c7ae761869bc"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/nuxed/nuxed/zipball/f9cb58b0b4b045a59b50d283e5661efd7412ce5d",
-                "reference": "f9cb58b0b4b045a59b50d283e5661efd7412ce5d",
+                "url": "https://api.github.com/repos/nuxed/nuxed/zipball/8f070cf6287739064aa1fd10eb67c7ae761869bc",
+                "reference": "8f070cf6287739064aa1fd10eb67c7ae761869bc",
                 "shasum": ""
             },
             "require": {
                 "azjezz/http-normalizer": "^1.1",
                 "facebook/hack-router": "^0.19.8",
-                "hhvm": "~4.113.0 || ~4.114.0",
+                "hhvm": "^4.113.0",
                 "hhvm/type-assert": "^4.2.0"
             },
             "conflict": {
@@ -436,7 +436,7 @@
                 "source": "https://github.com/nuxed/nuxed/tree/develop",
                 "issues": "https://github.com/nuxed/nuxed/issues"
             },
-            "time": "2021-06-27T17:20:52+00:00"
+            "time": "2021-06-27T17:26:04+00:00"
         }
     ],
     "packages-dev": [
@@ -583,7 +583,7 @@
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {
-        "hhvm": "~4.113.0 || ~4.114.0"
+        "hhvm": "^4.113.0"
     },
     "platform-dev": [],
     "plugin-api-version": "2.1.0"

@@ -13,10 +13,6 @@ async function main(): Awaitable<void> {
   $cache = new Cache\Cache(new Cache\Store\ApcStore());
   $application = new Http\Application(null, vec[], null, $cache);
 
-  $application->listen<Http\Event\BeforeEmitEvent>(
-    new EventListener\SecurityHeadersEventListener(),
-  );
-
   await $application
 
     ->get('/', new Handler\IndexHandler())

@@ -1,11 +1,12 @@
 composer install --no-dev
-composer dump-autoload
+
+hhvm vendor/bin/hh-autoload --no-dev
 
 docker-compose up -d
 
 hhvm bin/console.hack build --production
 
-killall hhvm
+kill -9 $(pidof hhvm) $(pidof hh_client) $(pidof hh_server)
 
 hhvm -m daemon -c server.ini -p 8080
 

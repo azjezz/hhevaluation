@@ -5,7 +5,10 @@ extern crate tokio;
 
 use futures::{future, StreamExt};
 use serde_json::json;
-use shiplift::{tty::TtyChunk, Container, ContainerOptions, Docker, Exec, ExecContainerOptions};
+use shiplift::{
+    tty::TtyChunk, Container, ContainerOptions, Docker, Exec, ExecContainerOptions,
+    RmContainerOptions,
+};
 use std::{env, fs::File, io::Read, str, string::String, time::Duration};
 
 #[tokio::main]
@@ -64,7 +67,14 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     )
     .await;
 
-    container.kill(None).await?;
+    container
+        .remove(
+            RmContainerOptions::builder()
+                .force(true)
+                .volumes(true)
+                .build(),
+        )
+        .await?;
 
     let json = json!({
         "runtime":  {

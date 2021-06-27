@@ -7,4 +7,5 @@ edition = "2018"
 [dependencies]
 tokio = { version = "1", features = ["full"] }
 futures = { version = "0.3" }
-rustc-serialize = { version = "0.3" }
+shiplift = { version = "0.7" }
+serde_json = { version = "1.0" }

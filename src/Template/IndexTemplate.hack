@@ -1,18 +1,7 @@
 
 namespace HHEvaluation\Template;
 
-use type Facebook\XHP\HTML\{
-  code,
-  pre,
-  hr,
-  button,
-  div,
-  form,
-  span,
-  textarea,
-  nav,
-  i,
-};
+use type Facebook\XHP\HTML\{button, div, form, nav, textarea};
 
 final class IndexTemplate {
   const DEFAULT_CODE = <<<HACK

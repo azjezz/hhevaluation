@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "6fbe4f063ee84dfff207814c2c38afc1",
+    "content-hash": "fe897c7a13daae876b79b05075e6e227",
     "packages": [
         {
             "name": "azjezz/http-normalizer",
@@ -46,6 +46,44 @@
                 "source": "https://github.com/azjezz/http-normalizer/tree/v1.1.0"
             },
             "time": "2020-12-13T02:04:35+00:00"
+        },
+        {
+            "name": "azjezz/tarry",
+            "version": "0.1.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/azjezz/tarry.git",
+                "reference": "f38bfe5cc93d8e9fca2522672a58ace2d2ebe498"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/azjezz/tarry/zipball/f38bfe5cc93d8e9fca2522672a58ace2d2ebe498",
+                "reference": "f38bfe5cc93d8e9fca2522672a58ace2d2ebe498",
+                "shasum": ""
+            },
+            "require": {
+                "hhvm": "^4.113.0"
+            },
+            "require-dev": {
+                "hhvm/hhast": "^4.113.0",
+                "hhvm/hhvm-autoload": "^3.2.0"
+            },
+            "type": "library",
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "azjezz",
+                    "email": "azjezz@protonmail.com"
+                }
+            ],
+            "support": {
+                "issues": "https://github.com/azjezz/tarry/issues",
+                "source": "https://github.com/azjezz/tarry/tree/0.1.0"
+            },
+            "time": "2021-07-05T02:43:59+00:00"
         },
         {
             "name": "facebook/hack-http-request-response-interfaces",
@@ -365,12 +403,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/nuxed/nuxed.git",
-                "reference": "8f070cf6287739064aa1fd10eb67c7ae761869bc"
+                "reference": "996f457b1e9561800e3b7769b06e367b62787670"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/nuxed/nuxed/zipball/8f070cf6287739064aa1fd10eb67c7ae761869bc",
-                "reference": "8f070cf6287739064aa1fd10eb67c7ae761869bc",
+                "url": "https://api.github.com/repos/nuxed/nuxed/zipball/996f457b1e9561800e3b7769b06e367b62787670",
+                "reference": "996f457b1e9561800e3b7769b06e367b62787670",
                 "shasum": ""
             },
             "require": {
@@ -436,7 +474,7 @@
                 "source": "https://github.com/nuxed/nuxed/tree/develop",
                 "issues": "https://github.com/nuxed/nuxed/issues"
             },
-            "time": "2021-06-27T17:26:04+00:00"
+            "time": "2021-07-03T17:35:39+00:00"
         }
     ],
     "packages-dev": [

@@ -4,19 +4,17 @@ namespace HHEvaluation\Template;
 use namespace HHEvaluation\{HHVM, Model, Template};
 
 use type Facebook\XHP\HTML\{
-  code,
-  pre,
-  hr,
   button,
+  code,
   div,
-  form,
-  span,
-  textarea,
+  hr,
   nav,
-  select,
   option,
-  i,
+  pre,
+  select,
+  textarea,
 };
+
 final class ShowTemplate {
   public static function rendexr(
     Model\CodeSample $code_sample,

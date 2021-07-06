@@ -1,12 +1,9 @@
 namespace HHEvaluation\HHVM;
 
 use namespace HH\Lib\Str;
-use namespace Nuxed\Console\Command;
-use namespace Nuxed\Http\Client;
-use namespace Nuxed\Http\Message;
+use namespace Nuxed\Http\{Client, Message};
 use namespace Nuxed\Json;
 use namespace HHEvaluation;
-use namespace HHEvaluation\Model;
 
 final class API {
   const NIGHTLY_STATUS = 'https://hhvm.com/api/build-status/nightly';
@@ -37,8 +34,6 @@ final class API {
       'Failed retriving %s build version.',
       $version,
     );
-
-    list($year, $month, $day) = Str\split($result['version'], '.', 3);
 
     return \DateTimeImmutable::createFromFormat('Y.m.d', $result['version']);
   }

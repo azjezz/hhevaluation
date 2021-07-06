@@ -1,19 +1,13 @@
 namespace HHEvaluation\Command;
 
-use namespace HH\Asio;
-use namespace HH\Lib\Str;
-use namespace Nuxed\Console\Feedback;
 use namespace Nuxed\Console\Command;
 use namespace Nuxed\Console\Input\Definition;
-use namespace Nuxed\Process;
 use namespace HHEvaluation\BuildStep;
-use namespace HHEvaluation\HHVM;
 
 final class BuildCommand extends Command\Command {
   const vec<classname<BuildStep\Step>> STEPS = vec[
     BuildStep\DockerStep::class,
     BuildStep\MigrationStep::class,
-    BuildStep\BinaryStep::class,
     BuildStep\ModeStep::class,
     BuildStep\RepoAuthStep::class,
   ];

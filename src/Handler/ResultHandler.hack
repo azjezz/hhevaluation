@@ -1,7 +1,7 @@
 namespace HHEvaluation\Handler;
 
 use namespace HHEvaluation;
-use namespace HHEvaluation\{HHVM, Model, Service};
+use namespace HHEvaluation\{HHVM, Model};
 use namespace Nuxed\Http\{Exception, Handler, Message};
 
 final class ResultHandler implements Handler\IHandler {
@@ -21,9 +21,8 @@ final class ResultHandler implements Handler\IHandler {
       $version,
     );
 
-
     if ($result is null) {
-      $structure = await HHEvaluation\HHExecute::run($code_sample, $version);
+      $structure = await HHEvaluation\DockerEngine::run($code_sample, $version);
       $result = await Model\CodeSampleResult::create($structure);
     }
 

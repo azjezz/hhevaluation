@@ -59,12 +59,12 @@ final class CodeSampleResult extends AbstractModel {
     return new SQL\Query(
       'INSERT INTO code_sample_result (
         code_sample_id,
-        version, 
+        version,
 
         runtime_detailed_version,
         runtime_exit_code,
         runtime_stdout,
-        runtime_stderr, 
+        runtime_stderr,
 
         type_checker_detailed_version,
         type_checker_exit_code,
@@ -107,13 +107,13 @@ final class CodeSampleResult extends AbstractModel {
     this::Structure $structure,
   ): SQL\Query {
     return new SQL\Query(
-      'UPDATE code_sample_result SET 
+      'UPDATE code_sample_result SET
         code_sample_id = %d,
         version = %s,
         runtime_detailed_version = %s,
         runtime_exit_code = %d,
         runtime_stdout = %s,
-        runtime_stderr = %s, 
+        runtime_stderr = %s,
         type_checker_detailed_version = %s,
         type_checker_exit_code = %d,
         type_checker_stdout = %s,

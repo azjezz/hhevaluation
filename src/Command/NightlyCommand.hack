@@ -4,7 +4,7 @@ use namespace HH\Lib\{C, Str, Vec};
 use namespace Nuxed\Console\Command;
 use namespace Nuxed\Process;
 use namespace HHEvaluation;
-use namespace HHEvaluation\{Model, Service, HHVM};
+use namespace HHEvaluation\{HHVM, Model};
 
 final class NightlyCommand extends Command\Command {
   <<__Override>>
@@ -27,24 +27,22 @@ final class NightlyCommand extends Command\Command {
 
     $count = C\count($builds);
     if (0 !== $count) {
-      $awaitables = vec[];
       await Vec\map_async($builds, async ($result) ==> {
         $code_sample = await Model\CodeSample::findOne(
           $result->getData()['code_sample_id'],
         ) as nonnull;
 
-        $structure = await HHEvaluation\HHExecute::run(
+        $structure = await HHEvaluation\DockerEngine::run(
           $code_sample,
           HHVM\Version::HHVM_NIGHTLY,
         );
-
 
         await $result->update($structure);
       });
     }
 
     await $this->output
-      ->writeln(Str\format(
+      ->writeLine(Str\format(
         '- updated <fg=cyan>%d</> build(s) to nightly-%s.',
         $count,
         $latest_build_date->format('Y-m-d'),

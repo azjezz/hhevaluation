@@ -1,11 +1,8 @@
 namespace HHEvaluation\BuildStep;
 
 use namespace HHEvaluation\Service;
-use namespace Nuxed\Console\Command;
-use namespace HH\Lib\{C, File, Str, Vec, Math};
-use namespace Nuxed\Process;
-use namespace Nuxed\Console\Output;
-use namespace Nuxed\Console\Feedback;
+use namespace HH\Lib\{C, Math, Vec};
+use namespace Nuxed\Console\{Feedback, Output};
 
 /**
  * Run database migrations
@@ -107,9 +104,10 @@ final abstract class MigrationStep extends Step {
     ],
   ];
 
+  <<__Override>>
   public static async function run(
     Output\IOutput $output,
-    bool $production = false,
+    bool $_production = false,
   ): Awaitable<void> {
     $count = Vec\map(self::MIGRATIONS, ($queries) ==> C\count($queries));
     $total = Math\sum($count);

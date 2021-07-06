@@ -5,7 +5,6 @@ use namespace Nuxed\Console\Output;
 <<
   __ConsistentConstruct,
   __Sealed(
-    BinaryStep::class,
     DockerStep::class,
     MigrationStep::class,
     ModeStep::class,

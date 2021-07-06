@@ -12,7 +12,8 @@ final abstract class Utils {
       new \DateTimeZone(\date_default_timezone_get()),
     ) as \DateTimeImmutable;
 
-    $dateTime = $dateTime->setTimezone(new \DateTimeZone('GMT')) as \DateTimeImmutable;
+    $dateTime = $dateTime->setTimezone(new \DateTimeZone('GMT'))
+      as \DateTimeImmutable;
 
     return $dateTime;
   }
@@ -21,17 +22,17 @@ final abstract class Utils {
     return self::getCurrentDatetime()->format('Y-m-d H:i:s');
   }
 
-  public static function getDateTimeFromString(string $datetime): \DateTimeImmutable {
+  public static function getDateTimeFromString(
+    string $datetime,
+  ): \DateTimeImmutable {
     return \DateTimeImmutable::createFromFormat(
       'Y-m-d H:i:s',
       $datetime,
-      new \DateTimeZone('GMT')
+      new \DateTimeZone('GMT'),
     ) as \DateTimeImmutable;
   }
 
-  public static function getDueDaysFromString(
-    string $datetime
-  ): int {
+  public static function getDueDaysFromString(string $datetime): int {
     $current_datetime = self::getCurrentDatetime();
     $past_datetime = self::getDateTimeFromString($datetime);
 

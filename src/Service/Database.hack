@@ -21,7 +21,6 @@ final class Database implements \IAsyncDisposable {
       this::Configuration,
     >('database');
 
-
     $connection = await \AsyncMysqlClient::connect(
       $configuration['host'],
       $configuration['port'],

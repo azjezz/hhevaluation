@@ -173,7 +173,11 @@ final class DockerEngine {
           'Detach' => false,
         ],
       ),
-      shape('debug' => true),
+      shape(
+        'debug' => true,
+        'timeout' => 180.0,
+        'connect_timeout' => 120.0,
+      ),
     );
 
     invariant($response->getStatusCode() === 200, 'Failed to start exec.');

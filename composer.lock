@@ -403,12 +403,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/nuxed/nuxed.git",
-                "reference": "12982fd10bc7ac90ea2bf1476d89e8e5f530a1c2"
+                "reference": "4e22eeabaf02c781662dfc1701327ecc9d3c8c01"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/nuxed/nuxed/zipball/12982fd10bc7ac90ea2bf1476d89e8e5f530a1c2",
-                "reference": "12982fd10bc7ac90ea2bf1476d89e8e5f530a1c2",
+                "url": "https://api.github.com/repos/nuxed/nuxed/zipball/4e22eeabaf02c781662dfc1701327ecc9d3c8c01",
+                "reference": "4e22eeabaf02c781662dfc1701327ecc9d3c8c01",
                 "shasum": ""
             },
             "require": {
@@ -474,7 +474,7 @@
                 "source": "https://github.com/nuxed/nuxed/tree/develop",
                 "issues": "https://github.com/nuxed/nuxed/issues"
             },
-            "time": "2021-07-06T11:45:04+00:00"
+            "time": "2021-07-06T11:58:31+00:00"
         }
     ],
     "packages-dev": [

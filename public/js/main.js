@@ -29,17 +29,7 @@
       /** @type {HTMLSelectElement} selector */
       let selector = document.getElementById('hhvm-version-selector')
 
-      let version
-      let promises = {}
-      for (option of selector.options) {
-        /**
-         * @type {HTMLOptionElement} option
-         */
-        version = option.value
-
-        promises[version] = get_result(identifier, version)
-      }
-
+      let promise = get_result(identifier)
 
       let update = async () => {
         selector.disabled = true
@@ -50,14 +40,16 @@
         url.searchParams.set('version', selector.value)
         window.history.pushState({}, '', url)
 
-        await update_result(await promises[selector.value])
+        let result = await promise
+
+        update_result(result[selector.value])
 
         selector.disabled = false
       }
 
       selector.addEventListener('change', update)
 
-      await update()
+      update()
     }
   })
 })()
@@ -80,9 +72,7 @@ function hide_result() {
   document.getElementById('type_checker.stdout').parentElement.classList.remove('text-red-500')
 }
 
-async function update_result(result) {
-  result = await result
-
+function update_result(result) {
   document.getElementById(`runtime.stdout`).innerText = result.runtime_stdout
   document.getElementById(`runtime.stderr`).innerText = result.runtime_stderr
   document.getElementById(`runtime.version_details`).innerText = result.runtime_detailed_version
@@ -115,8 +105,7 @@ async function update_result(result) {
     document.getElementById(`type_checker.stderr`).parentElement.classList.remove('hidden')
   }
 
-  // hhvm exists with 255 if exit() hasn't been called.
-  if (0 !== result.runtime_exit_code && 255 !== result.runtime_exit_code) {
+  if (0 !== result.runtime_exit_code) {
     document.getElementById('runtime_container').classList.remove('border-gray-900')
     document.getElementById('runtime_container').classList.add('border-red-500')
   }
@@ -132,16 +121,16 @@ async function update_result(result) {
   document.getElementById('type_checker.version_details').parentElement.classList.remove('hidden')
 }
 
-async function get_result(identifier, version) {
+async function get_result(identifier) {
   let response
   for (let i = 0; i < 3; i++) {
-    response = await fetch('/c/' + identifier + '/result/' + version)
+    response = await fetch('/c/' + identifier + '/result')
     if (response.status === 200) {
       return await response.json()
     }
   }
 
-  throw new Error(`Failed to fetch HHVM ${version} results for ${identifier}`)
+  throw new Error(`Failed to fetch HHVM results for ${identifier}`)
 }
 
 

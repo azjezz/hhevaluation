@@ -32,7 +32,7 @@ final class NightlyCommand extends Command\Command {
           $result->getData()['code_sample_id'],
         ) as nonnull;
 
-        $structure = await HHEvaluation\DockerEngine::run(
+        $structure = await HHEvaluation\Evaluator::run(
           $code_sample,
           HHVM\Version::HHVM_NIGHTLY,
         );

@@ -17,7 +17,7 @@ async function main(): Awaitable<void> {
 
     ->get('/', new Handler\IndexHandler())
     ->get('/c/{id}', new Handler\ShowHandler())
-    ->get('/c/{id}/result/{version}', new Handler\ResultHandler())
+    ->get('/c/{id}/result', new Handler\ResultHandler())
 
     ->post('/c', new Handler\SubmitHandler())
 

@@ -14,6 +14,7 @@ async function console(): Awaitable<void> {
 
   $application
     ->add(new Command\BuildCommand())
+    ->add(new Command\ShutdownCommand())
     ->add(new Command\NightlyCommand());
 
   await $application->run();

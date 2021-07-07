@@ -1,5 +1,6 @@
 namespace HHEvaluation\Handler;
 
+use namespace HH\Asio;
 use namespace HHEvaluation;
 use namespace HHEvaluation\{HHVM, Model};
 use namespace Nuxed\Http\{Exception, Handler, Message};
@@ -9,32 +10,25 @@ final class ResultHandler implements Handler\IHandler {
     Message\IServerRequest $request,
   ): Awaitable<Message\IResponse> {
     $identifier = (int)$request->getAttribute<string>('id');
-    $version = HHVM\Version::coerce($request->getAttribute<string>('version'));
 
     $code_sample = await Model\CodeSample::findOne($identifier);
-    if (null === $code_sample || null === $version) {
+    if (null === $code_sample) {
       throw new Exception\NotFoundException();
     }
 
-    $result = await Model\CodeSampleResult::findOneByCodeSampleAndVersion(
-      $code_sample,
-      $version,
-    );
-
-    if ($result is null) {
-      $structure = await HHEvaluation\DockerEngine::run($code_sample, $version);
-      $result = await Model\CodeSampleResult::create($structure);
+    $results = dict[];
+    foreach (HHVM\Version::getValues() as $version) {
+      $results[$version] = async {
+        return await HHEvaluation\Evaluator::getResult($code_sample, $version)
+          |> $$->toDict();
+      };
     }
 
-    return Message\Response\json($result->toDict())
+    $results = await Asio\m($results);
+
+    return Message\Response\json($results)
       |> Message\Response\with_cache_control_directive($$, 'must-revalidate')
       |> Message\Response\with_cache_control_directive($$, 'public')
-      |> Message\Response\with_max_age($$, 86400)
-      |> Message\Response\with_last_modified(
-        $$,
-        HHEvaluation\Utils::getDateTimeFromString(
-          $result->getData()['last_updated'],
-        )->getTimestamp(),
-      );
+      |> Message\Response\with_max_age($$, 86400);
   }
 }

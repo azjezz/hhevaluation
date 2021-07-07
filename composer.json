@@ -10,7 +10,7 @@
         "hhvm": "^4.113.0",
         "nuxed/nuxed": "dev-develop",
         "facebook/xhp-lib": "^4.0",
-        "azjezz/tarry": "^0.1"
+        "azjezz/tarry": "^0.2"
     },
     "require-dev": {
         "hhvm/hhast": "^4.113.0",

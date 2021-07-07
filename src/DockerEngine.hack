@@ -27,7 +27,7 @@ final class DockerEngine {
         dict[
           'Image' => Str\format('hhvm/hhvm:%s', $version),
           'WorkingDir' => '/home',
-          'StopTimeout' => 120,
+          'StopTimeout' => 0,
           'Tty' => true,
           'HostConfig' => dict[
             'Memory' => (1024 * 1024 * 180),
@@ -49,27 +49,29 @@ final class DockerEngine {
 
     concurrent {
       await async {
+        $tar = await Tarry\ArchiveBuilder::create()
+          ->withNode(shape(
+            'filename' => 'main.hack',
+            'content' => $code_sample_data['code'],
+          ))
+          ->withNode(shape(
+            'filename' => '.hhconfig',
+            'content' => $code_sample_data['hh_configuration'],
+          ))
+          ->withNode(shape(
+            'filename' => 'configuration.ini',
+            'content' => $code_sample_data['ini_configuration'],
+          ))
+          ->build()
+          ->getHandle()
+          ->readAllAsync();
+
         $response = await $client->send(
           Message\request(
             Message\HttpMethod::PUT,
             Message\uri('/containers/'.$container_id.'/archive?path=/home'),
             dict['Content-Type' => vec['application/x-tar']],
-            Message\Body\memory(
-              Tarry\ArchiveBuilder::create()
-                ->withNode(shape(
-                  'filename' => 'main.hack',
-                  'content' => $code_sample_data['code'],
-                ))
-                ->withNode(shape(
-                  'filename' => '.hhconfig',
-                  'content' => $code_sample_data['hh_configuration'],
-                ))
-                ->withNode(shape(
-                  'filename' => 'configuration.ini',
-                  'content' => $code_sample_data['ini_configuration'],
-                ))
-                ->build(),
-            ),
+            Message\Body\memory($tar),
           ),
         );
 

@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "fe897c7a13daae876b79b05075e6e227",
+    "content-hash": "0ce026520f39101a0fc05f938c7cc8c2",
     "packages": [
         {
             "name": "azjezz/http-normalizer",
@@ -49,16 +49,16 @@
         },
         {
             "name": "azjezz/tarry",
-            "version": "0.1.0",
+            "version": "0.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/azjezz/tarry.git",
-                "reference": "f38bfe5cc93d8e9fca2522672a58ace2d2ebe498"
+                "reference": "f2603d2fdda3d1403db3b68090d0445889b65754"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/azjezz/tarry/zipball/f38bfe5cc93d8e9fca2522672a58ace2d2ebe498",
-                "reference": "f38bfe5cc93d8e9fca2522672a58ace2d2ebe498",
+                "url": "https://api.github.com/repos/azjezz/tarry/zipball/f2603d2fdda3d1403db3b68090d0445889b65754",
+                "reference": "f2603d2fdda3d1403db3b68090d0445889b65754",
                 "shasum": ""
             },
             "require": {
@@ -81,9 +81,9 @@
             ],
             "support": {
                 "issues": "https://github.com/azjezz/tarry/issues",
-                "source": "https://github.com/azjezz/tarry/tree/0.1.0"
+                "source": "https://github.com/azjezz/tarry/tree/0.2.0"
             },
-            "time": "2021-07-05T02:43:59+00:00"
+            "time": "2021-07-06T20:03:22+00:00"
         },
         {
             "name": "facebook/hack-http-request-response-interfaces",

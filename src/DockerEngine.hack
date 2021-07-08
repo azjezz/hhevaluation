@@ -277,9 +277,6 @@ final class DockerEngine {
         case 2:
           $stderr .= $output;
           break;
-        default:
-          invariant_violation('Stdin output encountered.');
-          break;
       }
     }
 

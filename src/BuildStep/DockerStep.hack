@@ -18,7 +18,7 @@ final abstract class DockerStep extends Step {
     $versions = HHVM\Version::getValues();
     $progress = new Feedback\ProgressBarFeedback(
       $output,
-      C\count($versions) * 2,
+      C\count($versions) * 3,
       '<fg=green>docker</>      :',
     );
 
@@ -33,11 +33,14 @@ final abstract class DockerStep extends Step {
             vec[
               'pull',
               'hhvm/hhvm:'.$version,
+              '-q',
             ],
           );
 
           await $progress->advance();
         }
+
+        await $progress->advance();
       };
     }
 

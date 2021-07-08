@@ -1,6 +1,6 @@
 namespace HHEvaluation;
 
-use namespace HH\Lib\{IO, Str};
+use namespace HH\Lib\{C, IO, Str, Vec};
 use namespace Nuxed\Http\{Client, Message};
 use namespace Nuxed\Json;
 use namespace Tarry;
@@ -11,15 +11,9 @@ use namespace Tarry;
 final class DockerEngine {
   private static ?Client\IHttpClient $client = null;
 
-  /**
-   * Run the give code sample in a Docker container.
-   */
-  public static async function run(
-    Model\CodeSample $code,
+  public static async function createAndStartContainer(
     HHVM\Version $version,
-  ): Awaitable<Model\CodeSampleResult::Structure> {
-    $code_sample_data = $code->getData();
-
+  ): Awaitable<string> {
     $client = DockerEngine::getClient();
     $response = await $client->send(
       Message\Request\json(
@@ -30,11 +24,15 @@ final class DockerEngine {
           'StopTimeout' => 0,
           'Tty' => true,
           'HostConfig' => dict[
-            'Memory' => (1024 * 1024 * 180),
-            'MemoryReservation' => (1024 * 1024 * 150),
+            'Memory' => (1024 * 1024 * 280),
+            'MemoryReservation' => (1024 * 1024 * 250),
             'AutoRemove' => true,
           ],
           'NetworkDisabled' => true,
+          'Labels' => dict[
+            'org.nuxed.hhevaluation.container' => 'true',
+            'org.nuxed.hhevaluation.version' => $version,
+          ],
         ],
       ),
     );
@@ -45,101 +43,128 @@ final class DockerEngine {
       |> Json\typed<shape('Id' => string, ...)>($$)
       |> $$['Id'];
 
-    await $client->request('POST', '/containers/'.$container_id.'/start');
+    $response = await $client->request(
+      'POST',
+      '/containers/'.$container_id.'/start',
+    );
 
-    concurrent {
-      await async {
-        $tar = await Tarry\ArchiveBuilder::create()
-          ->withNode(shape(
-            'filename' => 'main.hack',
-            'content' => $code_sample_data['code'],
-          ))
-          ->withNode(shape(
-            'filename' => '.hhconfig',
-            'content' => $code_sample_data['hh_configuration'],
-          ))
-          ->withNode(shape(
-            'filename' => 'configuration.ini',
-            'content' => $code_sample_data['ini_configuration'],
-          ))
-          ->build()
-          ->getHandle()
-          ->readAllAsync();
+    invariant($response->getStatusCode() === 204, 'Failed to start container');
 
-        $response = await $client->send(
-          Message\request(
-            Message\HttpMethod::PUT,
-            Message\uri('/containers/'.$container_id.'/archive?path=/home'),
-            dict['Content-Type' => vec['application/x-tar']],
-            Message\Body\memory($tar),
-          ),
-        );
+    return $container_id;
+  }
 
-        invariant(
-          $response->getStatusCode() === 200,
-          'Failed to put archive in the container.',
-        );
-      };
+  public static async function findAllRunningContainers(
+  ): Awaitable<vec<string>> {
+    $client = DockerEngine::getClient();
+    $response = await $client->request(
+      Message\HttpMethod::GET,
+      '/containers/json?filters={"label":["org.nuxed.hhevaluation.container"]}',
+    );
 
-      list($_, $hhvm_version, $_) = await static::exec(
-        $client,
-        $container_id,
-        vec['hhvm', '--version'],
-      );
-      list($_, $hh_version, $_) = await static::exec(
-        $client,
-        $container_id,
-        vec['hh_client', '--version'],
-      );
+    invariant($response->getStatusCode() === 200, 'Failed to get containers');
+
+    return await $response->getBody()->readAllAsync()
+      |> Json\typed<vec<shape('Id' => string, ...)>>($$)
+      |> Vec\map($$, $container ==> $container['Id'] as string);
+  }
+
+  public static async function findOrCreateContainerForVersion(
+    HHVM\Version $version,
+  ): Awaitable<string> {
+    $client = DockerEngine::getClient();
+    $response = await $client->request(
+      Message\HttpMethod::GET,
+      '/containers/json?filters={"label":["org.nuxed.hhevaluation.container"]}',
+    );
+
+    invariant($response->getStatusCode() === 200, 'Failed to get containers');
+
+    $container = await $response->getBody()->readAllAsync()
+      |> Json\typed<
+        vec<shape('Id' => string, 'Labels' => dict<string, string>, ...)>,
+      >($$)
+      |> Vec\filter(
+        $$,
+        ($container) ==> (
+          $container['Labels']['org.nuxed.hhevaluation.version'] ?? null
+        ) ===
+          $version,
+      )
+      |> C\first($$);
+
+    if (null === $container) {
+      return await self::createAndStartContainer($version);
     }
 
-    concurrent {
-      list($hhvm_exit_code, $hhvm_stdout, $hhvm_stderr) = await static::exec(
-        $client,
-        $container_id,
-        vec['hhvm', '-c', 'configuration.ini', 'main.hack'],
-      );
+    return $container['Id'];
+  }
 
-      list($hh_exit_code, $hh_stdout, $hh_stderr) = await static::exec(
-        $client,
-        $container_id,
-        vec['hh_client'],
-      );
-    }
-
+  public static async function forceDeleteContainer(
+    string $container_id,
+  ): Awaitable<void> {
+    $client = self::getClient();
     $response = await $client->request(
       'DELETE',
       '/containers/'.$container_id.'?v=true&force=true',
     );
 
     invariant($response->getStatusCode() === 204, 'Failed to remove container');
+  }
 
-    return shape(
-      'code_sample_id' => $code->getIdentifier(),
-      'version' => $version,
+  /**
+   * Extract an archive of code sample inside the given container.
+   */
+  public static async function archive(
+    string $container_id,
+    Model\CodeSample $code_sample,
+  ): Awaitable<void> {
+    $client = self::getClient();
+    $code_sample_data = $code_sample->getData();
 
-      'runtime_detailed_version' => $hhvm_version,
-      'runtime_exit_code' => $hhvm_exit_code,
-      'runtime_stdout' => $hhvm_stdout,
-      'runtime_stderr' => $hhvm_stderr,
+    $tar_handle = Tarry\ArchiveBuilder::create()
+      ->withNode(shape(
+        'filename' => Str\format('%d/main.hack', $code_sample->getIdentifier()),
+        'content' => $code_sample_data['code'],
+      ))
+      ->withNode(shape(
+        'filename' => Str\format('%d/.hhconfig', $code_sample->getIdentifier()),
+        'content' => $code_sample_data['hh_configuration'],
+      ))
+      ->withNode(shape(
+        'filename' =>
+          Str\format('%d/configuration.ini', $code_sample->getIdentifier()),
+        'content' => $code_sample_data['ini_configuration'],
+      ))
+      ->build()
+      ->getHandle();
 
-      'type_checker_detailed_version' => $hh_version,
-      'type_checker_exit_code' => $hh_exit_code,
-      'type_checker_stdout' => $hh_stdout,
-      'type_checker_stderr' => $hh_stderr,
+    $tar_handle->seek(0);
+    $tar = await $tar_handle->readAllAsync();
+    $response = await $client->send(
+      Message\request(
+        Message\HttpMethod::PUT,
+        Message\uri('/containers/'.$container_id.'/archive?path=/home'),
+        dict['Content-Type' => vec['application/x-tar']],
+        Message\Body\memory($tar),
+      ),
+    );
 
-      'last_updated' => Utils::getCurrentDatetimeString(),
+    invariant(
+      $response->getStatusCode() === 200,
+      'Failed to put archive in the container.',
     );
   }
 
   /**
    * Execute a command in the container.
    */
-  private static async function exec(
-    Client\IHttpClient $client,
+  public static async function exec(
     string $container_id,
     vec<string> $args,
+    string $working_dir,
+    bool $needs_exit_code = true,
   ): Awaitable<(int, string, string)> {
+    $client = self::getClient();
     $response = await $client->send(
       Message\Request\json(
         Message\uri('/containers/'.$container_id.'/exec'),
@@ -150,6 +175,7 @@ final class DockerEngine {
           'Cmd' => $args,
           'NetworkDisabled' => true,
           'Detach' => false,
+          'WorkingDir' => $working_dir,
         ],
       ),
       shape(
@@ -173,6 +199,7 @@ final class DockerEngine {
           'Cmd' => $args,
           'NetworkDisabled' => true,
           'Detach' => false,
+          'WorkingDir' => $working_dir,
         ],
       ),
       shape(
@@ -186,17 +213,27 @@ final class DockerEngine {
 
     $output = await DockerEngine::split($response->getBody());
 
-    do {
+    if ($needs_exit_code) {
       $response = await $client->request('GET', '/exec/'.$exec_id.'/json');
 
       invariant($response->getStatusCode() === 200, 'Failed to get exec json.');
 
       $details = await $response->getBody()->readAllAsync()
-        |> Json\typed<shape('ExitCode' => ?int, 'Running' => bool, ...)>($$);
-    } while ($details['Running']);
+        |> Json\typed<shape('ExitCode' => int, 'Running' => bool, ...)>($$);
+
+      // make sure that exec is complete
+      invariant(
+        $details['Running'] === false,
+        'Exec is still running ( but we are not running in detach mode? ).',
+      );
+
+      $exit_code = $details['ExitCode'];
+    } else {
+      $exit_code = -1;
+    }
 
     return tuple(
-      $details['ExitCode'] as nonnull,
+      $exit_code,
       $output['stdout'] as string,
       $output['stderr'] as string,
     );

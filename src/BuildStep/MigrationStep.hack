@@ -102,6 +102,19 @@ final abstract class MigrationStep extends Step {
       'DROP TABLE runtime_result',
       'DROP TABLE type_checker_result',
     ],
+    'version:7' => vec[
+      'CREATE TABLE IF NOT EXISTS container_reference (
+        id INT NOT NULL AUTO_INCREMENT,
+        container_id TEXT NOT NULL,
+        version TEXT NOT NULL,
+        status TEXT NOT NULL,
+        PRIMARY KEY (id)
+      ) ENGINE=INNODB;',
+    ],
+    'version:8' => vec[
+      'DELETE FROM container_reference;',
+      'DROP TABLE container_reference;',
+    ],
   ];
 
   <<__Override>>

@@ -2,7 +2,7 @@ namespace HHEvaluation;
 
 use namespace HH\Lib\{C, IO, Str, Vec};
 use namespace Nuxed\Http\{Client, Message};
-use namespace Nuxed\Json;
+use namespace Nuxed\{Environment, Json};
 use namespace Tarry;
 
 /**
@@ -247,8 +247,12 @@ final class DockerEngine {
       return static::$client;
     }
 
+    // get the docker host socket from the environment.
+    $unix_socket = Environment\get('DOCKER_SOCKET', '/var/run/docker.sock')
+      as string;
+
     static::$client = Client\HttpClient::create(shape(
-      'unix_socket' => '/var/run/docker.sock',
+      'unix_socket' => $unix_socket,
     ));
 
     return static::$client;

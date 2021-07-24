@@ -248,7 +248,7 @@ final class DockerEngine {
     }
 
     // get the docker host socket from the environment.
-    $unix_socket = Environment\get('DOCKER_SOCKET', '/var/run/docker.sock')
+    $unix_socket = Environment\get('DOCKER_HOST', '/var/run/docker.sock')
       as string;
 
     static::$client = Client\HttpClient::create(shape(
